@@ -1,0 +1,72 @@
+ISP
+
+en
+conf t
+host ISP
+
+
+access-list 100 deny ip 10.0.0.0 0.255.255.255 any
+access-list 100 deny ip 172.16.0.0 0.15.255.255 any
+access-list 100 deny ip 192.168.0.0 0.0.255.255 any
+access-list 100 permit ip any any
+
+int s0/1/0
+desc # to VAN-RTR #
+ip add 20.26.50.254 255.255.255.252
+ip access-group 100 in
+no sh
+
+int s0/2/0
+desc # to TOR-RTR #
+ip add 20.26.60.254 255.255.255.252
+ip access-group 100 in
+no sh
+
+int s0/2/1
+desc # to MTL-RTR #
+ip add 20.26.70.254 255.255.255.252
+ip access-group 100 in
+no sh
+
+int lo0
+desc canada.ca
+ip add 160.106.123.29 255.255.255.255
+no sh
+
+int lo1
+desc ubc.ca
+ip add 52.223.56.149 255.255.255.255
+no sh
+
+int lo2
+desc sfu.ca
+ip add 142.58.226.71 255.255.255.255
+no sh
+
+int lo3
+desc bcit.ca
+ip add 142.232.230.10 255.255.255.255
+no sh
+
+int lo4
+desc dns.google
+ip add 8.8.8.8 255.255.255.255
+no sh
+
+int lo5
+desc NTP
+ip add 216.239.35.4 255.255.255.255
+no sh
+
+ip route 20.26.50.0 255.255.255.0 20.26.50.253
+ip route 20.26.60.0 255.255.255.0 20.26.60.253
+ip route 20.26.70.0 255.255.255.0 20.26.70.253
+
+ntp master 1
+ntp authentication-key 1 md5 speedrun
+ntp trusted-key 1
+do wr
+
+
+
+

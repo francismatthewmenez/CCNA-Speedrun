@@ -1,0 +1,92 @@
+hostname MTL-RTR
+
+int s0/1/0
+ip nat out
+desc # to ISP #
+ip add 20.26.70.253 255.255.255.252
+no sh
+
+int g0/0/0
+ip nat in
+ip add 10.70.10.254 255.255.255.0
+no sh
+
+int lo0
+ip add 70.70.1.1 255.255.255.255
+no sh
+
+ip dhcp pool MTL-LAN
+ network 10.70.10.0 255.255.255.0
+ default-router 10.70.10.254
+exit
+
+access-list 1 permit 10.70.10.0 0.0.0.255
+ip nat pool MTL-PCs 20.26.70.0 20.26.70.31 netmask 255.255.255.224
+ip nat inside source list 1 pool MTL-PCs
+
+ip route 0.0.0.0 0.0.0.0 20.26.70.254
+
+int tunnel0
+desc # to VAN-RTR #
+ip add 3.3.3.2 255.255.255.252
+tunnel source s0/1/0
+tunnel destination 20.26.50.253
+tunnel mode gre ip
+no shut
+exit
+
+int tunnel1
+desc # to TOR-RTR #
+ip add 2.2.2.2 255.255.255.252
+tunnel source s0/1/0
+tunnel destination 20.26.60.253
+tunnel mode gre ip
+no shut
+exit
+
+! phase 1
+crypto isakmp policy 10
+
+!- SHA256 isn't available in PT
+hash sha
+authentication pre-share
+!- Group 20 is the most secure, but is not available in PT.
+group 5
+lifetime 86400
+encryption aes 256
+ 
+exit 
+crypto isakmp key onemoretime address 20.26.50.253
+crypto isakmp key onemoretime address 20.26.60.253
+
+
+! phase 2
+crypto ipsec transform-set AES esp-aes 256 esp-sha-hmac
+
+ip access-list extended VAN-TUNNEL
+permit gre host 20.26.70.253 host 20.26.50.253
+
+ip access-list extended TOR-TUNNEL
+permit gre host 20.26.70.253 host 20.26.60.253
+
+crypto map GRE 10 ipsec-isakmp
+ match address VAN-TUNNEL
+ set peer 20.26.50.253
+ set transform-set AES
+!
+crypto map GRE 20 ipsec-isakmp
+ match address TOR-TUNNEL
+ set peer 20.26.60.253
+ set transform-set AES
+exit
+
+int s0/1/0
+crypto map GRE
+
+
+ip route 10.50.0.0 255.255.0.0 3.3.3.1
+ip route 10.51.0.0 255.255.0.0 3.3.3.1
+ip route 10.52.0.0 255.255.0.0 3.3.3.1
+ip route 10.60.0.0 255.255.0.0 2.2.2.1
+
+do wr
