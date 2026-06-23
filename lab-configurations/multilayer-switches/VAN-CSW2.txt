@@ -1,0 +1,205 @@
+!!------------------------------------------------------!!
+!! PHASE 1: BASIC DEVICE INITIALISATION !!
+
+en
+conf t
+
+service password-encryption
+hostname VAN-CSW2
+ip domain-name speedrun.ccna
+no ip domain lookup
+banner motd # ONLY SPEEDRUNNERS ALLOWED ! #
+no cdp run
+lldp run
+
+
+!!------------------------------------------------------!!
+!! PHASE 3 and 4: LAYER 3 CONFIGURATION (IPv4 and IPv6) !!
+
+!!--3.1) L3 ETHERCHANNEL--!!
+int range g1/0/11-12
+ no sh
+ no sw
+ channel-protocol lacp
+ channel-group 1 mode active
+int po1
+ no sh
+ no sw
+
+
+!!--3.4) IPv4 ADDRESSING--!!
+!!--4.2) IPv6 ADDRESSING--!!
+ip routing
+ipv6 unicast-routing
+
+int po1
+no sw
+ip add 192.168.50.10 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168:50::7/127
+ipv6 add fe80::50:2 link-local
+no sh
+!
+int g1/0/13
+desc #to VAN-DSW2#
+no sw
+ip add 192.168.50.25 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168:50::e/127
+ipv6 add fe80::50:2 link-local
+no sh
+!
+int g1/0/14
+desc #to VAN-DSW1#
+no sw
+ip add 192.168.50.17 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168:50::a/127
+ipv6 add fe80::50:2 link-local
+no sh
+!
+int g1/0/24
+desc #to VAN-RTR#
+no sw
+ip add 192.168.50.6 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168:50::5/127
+ipv6 add fe80::50:2 link-local
+no sh
+!
+int l0
+ip add 50.50.2.2 255.255.255.255
+ipv6 enable
+ipv6 add 2001::50:2/128
+ipv6 add fe80::50:2 link-local
+no sh
+!
+int lo1
+ip add 50.50.20.20 255.255.255.255
+no sh
+
+
+!!--3.9) DISABLE UNUSED INTERFACES--!!
+vlan 555
+name ParkingLot
+int range g1/0/1-10,g1/0/15-23,g1/1/1-4
+sw m a
+sw a vlan 555
+shut
+
+
+!!--3.12) NAMED ACL--!!
+ip access-list standard ALLOW_VAN-MANAGEMENT
+ permit 10.50.99.0 0.0.0.255
+!
+line vty 0 15
+ access-class ALLOW_VAN-MANAGEMENT in
+exit
+
+
+!!------------------------------------------------------!!
+!! PHASE 5: ROUTING !!
+
+!!--5.2) OSPFv2 and OSPFv3--!!
+!!--5.3) OSPF AUTHENTICATION--!!
+
+router ospf 2
+router-id 50.50.2.2
+passive lo0
+passive lo1
+auto-cost ref 10000
+area 50 authentication message-digest
+
+network 50.50.2.2 0.0.0.0 area 50
+network 50.50.20.20 0.0.0.0 area 50
+!
+network 192.168.50.10 0.0.0.0 area 50
+network 192.168.50.25 0.0.0.0 area 50
+network 192.168.50.17 0.0.0.0 area 50
+network 192.168.50.6 0.0.0.0 area 50
+exit
+
+ipv6 router ospf 3
+router-id 50.50.20.20
+passive lo0
+auto-cost ref 10000
+exit
+
+int lo0
+ipv6 ospf 3 area 50
+!
+int po1
+ipv6 ospf 3 area 50
+ip ospf message-digest-key 1 md5 Sp33drun
+!
+int g1/0/13
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+!
+int g1/0/14
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+!
+int g1/0/24
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+exit
+
+!!------------------------------------------------------!!
+!! PHASE 6: NETWORK SERVICES !!
+
+!!--6.2) ENABLE DOMAIN LOOKUP, CONFIGURE DNS SERVER--!!
+ip domain lookup
+ip name-server 10.50.104.1
+
+!!--6.9) NTP--!!
+ntp authentication-key 1 md5 Sp33drun
+ntp trusted-key 1
+ntp server 50.50.10.10 key 1
+
+!!--6.10) SNMP and 6.11) SYSLOG--!!
+snmp-server community Speedrunning ro
+logging host 10.50.104.2
+logging trap debugging
+logging buffered 8192
+
+
+!!------------------------------------------------------!!
+!! PHASE 7: SECURING MANAGEMENT INFRASTRUCTURE !!
+
+!!--7.1) BASIC DEVICE HARDENING--!!
+enable algorithm-type scrypt secret speedrunning
+username runner priv 15 algorithm-type scrypt secret iamspeed
+login block-for 120 attempts 3 within 60
+
+line con 0
+login local
+exec-timeout 30 0
+logging synchronous
+
+exit
+
+!!--7.7) GENERATE CRYPTO SSH KEYS--!!
+crypto key gen rsa
+4096
+
+!!--7.8) ENABLE SSHv2--!!
+ip ssh version 2
+
+!!--7.9) CONFIGURE VTY LINES--!!
+line vty 0 15
+transport input ssh
+login local
+
+!!--7.10) 30-MINUTE TIMEOUT, SYNCHRONOUS LOGGING--!!
+exec-timeout 30 0
+logging sync
+
+exit
+do wr

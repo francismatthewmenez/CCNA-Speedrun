@@ -1,0 +1,693 @@
+!!------------------------------------------------------!!
+!! PHASE 1: BASIC DEVICE INITIALISATION !!
+
+en
+conf t
+
+service password-encryption
+hostname VAN-DSW1
+ip domain-name speedrun.ccna
+no ip domain lookup
+banner motd # ONLY SPEEDRUNNERS ALLOWED ! #
+no cdp run
+lldp run
+
+
+
+!!------------------------------------------------------!!
+!! PHASE 2: LAYER 2 CONFIGURATION !!
+
+!!--2.1) LAYER 2 ETHERCHANNEL--!!
+int range g1/0/11-12
+no sh
+channel-protocol lacp
+channel-group 1 mode active
+int po1
+no sh
+exit
+
+
+!!--2.3) CONFIGURING VLANS--!!
+vlan 100
+name VAN-FL10-PCs
+vlan 101
+name VAN-FL10-VoIP
+vlan 102
+name VAN-FL10-WiFi
+vlan 103
+name VAN-FL10-Printers
+vlan 104
+name VAN-Servers
+!
+vlan 110
+name VAN-FL11-PCs
+vlan 111
+name VAN-FL11-VoIP
+vlan 112
+name VAN-FL11-WiFi
+vlan 113
+name VAN-FL11-Printers
+!
+vlan 120
+name VAN-FL12-PCs
+vlan 121
+name VAN-FL12-VoIP
+vlan 122
+name VAN-FL12-WiFi
+vlan 123
+name VAN-FL12-Printers
+!
+vlan 99
+name VAN-Management
+exit
+
+!!--2.7) CONFIGURING TRUNKS--!!
+int po1
+sw trunk enc dot1q
+sw m t 
+sw nonegotiate
+sw trunk nat vlan 999
+sw trunk all vlan 100-104,110-113,120-123,99,999
+!
+int g1/0/1
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg
+sw trunk nat vlan 999
+sw trunk all vlan 100-104,99,999
+!
+int g1/0/2
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg
+sw trunk nat vlan 999
+sw trunk all vlan 110-113,99,999
+!
+int g1/0/3
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg
+sw trunk nat vlan 999
+sw trunk all vlan 120-123,99,999
+
+
+!!--2.12) CONFIGURING WLC LINK--!!
+int g1/0/24
+no sh
+sw trunk enc dot1q
+sw mode trunk
+sw nonego
+sw trunk nat vlan 99
+sw trunk all vlan 102,112,122,99
+
+
+!!--2.13) CONFIGURING MANAGEMENT PC LINK--!!
+int g1/0/23
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 99
+
+
+!!--2.14) DISABLING UNUSED INTERFACES--!!
+vlan 555
+name ParkingLot
+int range g1/0/4-10,g1/0/15-22,g1/1/1-4
+sw m a
+sw a vlan 555
+shut
+
+
+!!--2.19) RAPID PVST+--!!
+span mode rapid
+span vlan 100-104,99 pri 0
+span vlan 110-113,120-123 pri 4096
+
+
+!!--2.20) STP SECURITY--!!
+Int g1/0/23
+span portfast
+span bpduguard enable
+int g1/0/24
+span portfast trunk
+
+
+
+!!------------------------------------------------------!!
+!! PHASE 3 and 4: LAYER 3 CONFIGURATION (IPv4 and IPv6) !!
+
+!!--3.4) IPv4 ADDRESSING--!!
+!!--4.2) IPv6 ADDRESSING--!!
+ip routing
+ipv6 unicast-routing
+
+int g1/0/13
+desc #to VAN-CSW1#
+no sw
+ip add 192.168.50.22 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168:50::d/127
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int g1/0/14
+desc #to VAN-CSW2#
+no sw
+ip add 192.168.50.18 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168:50::b/127
+ipv6 add fe80::50:3 link-local
+no sh
+!
+
+int vlan 100
+ip add 10.50.100.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:100::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 101
+ip add 10.50.101.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:101::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 102
+ip add 10.50.102.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:102::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 103
+ip add 10.50.103.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:103::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 104
+ip add 10.50.104.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:104::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+!
+int vlan 110
+ip add 10.50.110.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:110::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 111
+ip add 10.50.111.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:111::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 112
+ip add 10.50.112.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:112::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 113
+ip add 10.50.113.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:113::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+!
+int vlan 120
+ip add 10.50.120.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:120::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 121
+ip add 10.50.121.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:121::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 122
+ip add 10.50.122.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:122::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 123
+ip add 10.50.123.252 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:50:123::fffd/64
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int vlan 99
+ip add 10.50.99.252 255.255.255.0
+no sh
+!
+int l0
+ip add 50.50.3.1 255.255.255.255
+ipv6 enable
+ipv6 add 2001::50:3/128
+ipv6 add fe80::50:3 link-local
+no sh
+!
+int lo1
+ip add 50.50.30.10 255.255.255.255
+no sh
+exit
+
+
+!!--3.10) HSRP--!!
+
+int vlan 99
+standby ver 2
+standby 99 ip 10.50.99.254
+standby 99 pri 110
+standby 99 preempt
+!
+int vlan 100
+standby ver 2
+standby 100 ip 10.50.100.254
+standby 100 pri 110
+standby 100 preempt
+!
+int vlan 101
+standby ver 2
+standby 101 ip 10.50.101.254
+standby 101 pri 110
+standby 101 preempt
+!
+int vlan 102
+standby ver 2
+standby 102 ip 10.50.102.254
+standby 102 pri 110
+standby 102 preempt
+!
+int vlan 103
+standby ver 2
+standby 103 ip 10.50.103.254
+standby 103 pri 110
+standby 103 preempt
+!
+int vlan 104
+standby ver 2
+standby 104 ip 10.50.104.254
+standby 104 pri 110
+standby 104 preempt
+!
+!
+!
+int vlan 110
+standby ver 2
+standby 110 ip 10.50.110.254
+!
+int vlan 111
+standby ver 2
+standby 111 ip 10.50.111.254
+!
+int vlan 112
+standby ver 2
+standby 112 ip 10.50.112.254
+!
+int vlan 113
+standby ver 2
+standby 113 ip 10.50.113.254
+!
+int vlan 120
+standby ver 2
+standby 120 ip 10.50.120.254
+!
+int vlan 121
+standby ver 2
+standby 121 ip 10.50.121.254
+!
+int vlan 122
+standby ver 2
+standby 122 ip 10.50.122.254
+!
+int vlan 123
+standby ver 2
+standby 123 ip 10.50.123.254
+!
+exit
+
+
+!!--3.12) NAMED ACL--!!
+
+!!--ALLOW-MANAGEMENT--!!
+ip access-list standard ALLOW_VAN-MANAGEMENT
+ permit 10.50.99.0 0.0.0.255
+!
+line vty 0 15
+ access-class ALLOW_VAN-MANAGEMENT in
+
+
+!!--VOIP-IN--!!
+ip access-list extended VOIP-IN
+ permit udp any any eq bootps
+ !
+ permit ip any 10.50.101.0 0.0.0.255
+ permit ip any 10.50.111.0 0.0.0.255
+ permit ip any 10.50.121.0 0.0.0.255
+ permit ip any 10.51.81.0 0.0.0.255
+ permit ip any 10.51.91.0 0.0.0.255
+ permit ip any 10.52.11.0 0.0.0.255
+ ! 
+ permit udp any host 224.0.0.102 eq 1985
+ permit udp any host 50.50.10.10
+ permit tcp any any eq 2000
+ permit udp any any eq 5060
+ permit tcp any any eq 5060
+ permit tcp any any eq 5061
+ permit udp any any range 16384 32767
+ !
+ deny ip any any
+exit
+
+int vlan 101
+ ip access-group VOIP-IN in
+int vlan 111
+ ip access-group VOIP-IN in
+int vlan 121
+ ip access-group VOIP-IN in
+exit
+
+
+!!--PRINTER-IN--!!
+ip access-list extended PRINTER-IN
+ permit udp any any eq bootps
+ permit udp any any eq 53
+ permit tcp any any eq 53
+ permit udp any any eq 514
+ permit icmp any any echo-reply
+ permit udp any host 224.0.0.102 eq 1985
+ permit tcp any any est
+ !
+ deny ip any any
+exit
+
+int vlan 103
+ ip access-group PRINTER-IN in
+int vlan 113
+ ip access-group PRINTER-IN in
+int vlan 123
+ ip access-group PRINTER-IN in
+
+
+
+!!--PC-and-WiFi-IN--!!
+ip access-list extended PC-and-WiFi-IN
+ permit udp any any eq bootps
+ permit udp any any eq 53
+ permit tcp any any eq 53
+ permit udp any host 224.0.0.102 eq 1985
+ !
+ deny ip any 10.50.99.0 0.0.0.255
+ deny ip any 10.51.99.0 0.0.0.255
+ deny ip any 10.52.99.0 0.0.0.255
+ !
+ deny ip any 10.50.101.0 0.0.0.255
+ deny ip any 10.50.111.0 0.0.0.255
+ deny ip any 10.50.121.0 0.0.0.255
+ deny ip any 10.51.81.0 0.0.0.255
+ deny ip any 10.51.91.0 0.0.0.255
+ deny ip any 10.52.11.0 0.0.0.255
+ !
+ deny ip any 192.168.0.0 0.0.255.255
+ deny ip any host 50.50.1.1
+ deny ip any host 50.50.10.10
+ deny ip any host 51.51.1.1
+ deny ip any host 51.51.10.10
+ deny ip any host 52.52.1.1
+ deny ip any host 52.52.10.10
+ !
+ permit ip any any
+
+int vlan 100
+ ip access-group PC-and-WiFi-IN in
+int vlan 102
+ ip access-group PC-and-WiFi-IN in
+int vlan 110
+ ip access-group PC-and-WiFi-IN in
+int vlan 112
+ ip access-group PC-and-WiFi-IN in
+int vlan 120
+ ip access-group PC-and-WiFi-IN in
+int vlan 122
+ ip access-group PC-and-WiFi-IN in
+exit
+
+
+!!------------------------------------------------------!!
+!! PHASE 5: ROUTING !!
+
+!!--5.2) OSPFv2 and OSPFv3--!!
+!!--5.3) OSPF AUTHENTICATION--!!
+
+router ospf 2
+router-id 50.50.3.1
+!
+passive lo0
+passive lo1
+!
+passive vlan100
+passive vlan101
+passive vlan102
+passive vlan103
+passive vlan104
+!
+passive vlan110
+passive vlan111
+passive vlan112
+passive vlan113
+!
+passive vlan120
+passive vlan121
+passive vlan122
+passive vlan123
+!
+auto-cost ref 10000
+area 50 authentication message-digest
+!
+network 50.50.3.1 0.0.0.0 area 50
+network 50.50.30.10 0.0.0.0 area 50
+!
+network 192.168.50.22 0.0.0.0 area 50
+network 192.168.50.18 0.0.0.0 area 50
+!
+network 10.50.99.252 0.0.0.0 area 50
+network 10.50.100.252 0.0.0.0 area 50
+network 10.50.101.252 0.0.0.0 area 50
+network 10.50.102.252 0.0.0.0 area 50
+network 10.50.103.252 0.0.0.0 area 50
+network 10.50.104.252 0.0.0.0 area 50
+!
+network 10.50.110.252 0.0.0.0 area 50
+network 10.50.111.252 0.0.0.0 area 50
+network 10.50.112.252 0.0.0.0 area 50
+network 10.50.113.252 0.0.0.0 area 50
+!
+network 10.50.120.252 0.0.0.0 area 50
+network 10.50.121.252 0.0.0.0 area 50
+network 10.50.122.252 0.0.0.0 area 50
+network 10.50.123.252 0.0.0.0 area 50
+!
+exit
+
+ipv6 router ospf 3
+router-id 50.50.30.10
+!
+passive lo0
+!
+passive vlan100
+passive vlan101
+passive vlan102
+passive vlan103
+passive vlan104
+!
+passive vlan110
+passive vlan111
+passive vlan112
+passive vlan113
+!
+passive vlan120
+passive vlan121
+passive vlan122
+passive vlan123
+!
+auto-cost ref 10000
+exit
+
+int lo0
+ipv6 ospf 3 area 50
+!
+int g1/0/13
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+!
+int g1/0/14
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+!
+int vlan 99
+ip ospf message-digest-key 1 md5 Sp33drun
+
+interface vlan 100
+ ipv6 ospf 3 area 50
+interface vlan 101
+ ipv6 ospf 3 area 50
+interface vlan 102
+ ipv6 ospf 3 area 50
+interface vlan 103
+ ipv6 ospf 3 area 50
+interface vlan 104
+ ipv6 ospf 3 area 50
+interface vlan 110
+ ipv6 ospf 3 area 50
+interface vlan 111
+ ipv6 ospf 3 area 50
+interface vlan 112
+ ipv6 ospf 3 area 50
+interface vlan 113
+ ipv6 ospf 3 area 50
+interface vlan 120
+ ipv6 ospf 3 area 50
+interface vlan 121
+ ipv6 ospf 3 area 50
+interface vlan 122
+ ipv6 ospf 3 area 50
+interface vlan 123
+ ipv6 ospf 3 area 50
+
+
+
+!!------------------------------------------------------!!
+!! PHASE 6: NETWORK SERVICES !!
+
+!!--6.2) ENABLE DOMAIN LOOKUP, CONFIGURE DNS SERVER--!!
+ip domain lookup
+ip name-server 10.50.104.1
+
+!!--6.4) DHCP RELAY--!!
+int vlan 99
+ ip helper-address 50.50.1.1
+!
+int vlan 100
+ ip helper-address 50.50.1.1
+!
+int vlan 101
+ ip helper-address 50.50.1.1
+!
+int vlan 102
+ ip helper-address 50.50.1.1
+!
+int vlan 103
+ ip helper-address 50.50.1.1
+!
+!
+int vlan 110
+ ip helper-address 50.50.1.1
+!
+int vlan 111
+ ip helper-address 50.50.1.1
+!
+int vlan 112
+ ip helper-address 50.50.1.1
+!
+int vlan 113
+ ip helper-address 50.50.1.1
+!
+!
+int vlan 120
+ ip helper-address 50.50.1.1
+!
+int vlan 121
+ ip helper-address 50.50.1.1
+!
+int vlan 122
+ ip helper-address 50.50.1.1
+!
+int vlan 123
+ ip helper-address 50.50.1.1
+!
+exit
+
+!!--6.9) NTP--!!
+ntp authentication-key 1 md5 Sp33drun
+ntp trusted-key 1
+ntp server 50.50.10.10 key 1
+
+
+!!--6.10) SNMP and 6.11) SYSLOG--!!
+snmp-server community Speedrunning ro
+logging host 10.50.104.2
+logging trap debugging
+logging buffered 8192
+
+
+
+
+!!------------------------------------------------------!!
+!! PHASE 7: SECURING MANAGEMENT INFRASTRUCTURE !!
+
+!!--7.1) BASIC DEVICE HARDENING--!!
+enable algorithm-type scrypt secret speedrunning
+username runner priv 15 algorithm-type scrypt secret iamspeed
+login block-for 120 attempts 3 within 60
+
+line con 0
+login local
+exec-timeout 30 0
+logging synchronous
+
+exit
+
+!!--7.7) GENERATE CRYPTO SSH KEYS--!!
+crypto key gen rsa
+4096
+
+!!--7.8) ENABLE SSHv2--!!
+ip ssh version 2
+
+!!--7.9) CONFIGURE VTY LINES--!!
+line vty 0 15
+transport input ssh
+login local
+
+!!--7.10) 30-MINUTE TIMEOUT, SYNCHRONOUS LOGGING--!!
+exec-timeout 30 0
+logging sync
+
+exit
+do wr
+
+
+
+
+
+
+
+
+
+
+
