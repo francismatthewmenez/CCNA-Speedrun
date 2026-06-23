@@ -1,0 +1,463 @@
+!!------------------------------------------------------!!
+!! PHASE 1: BASIC DEVICE INITIALISATION !!
+
+en
+conf t
+
+service password-encryption
+hostname VAN-RTR
+ip domain-name speedrun.ccna
+no ip domain lookup
+banner motd # ONLY SPEEDRUNNERS ALLOWED ! #
+no cdp run
+lldp run
+
+
+!!------------------------------------------------------!!
+!! PHASE 3 and 4: LAYER 3 CONFIGURATION (IPv4 and IPv6) !!
+
+!!--3.2) IPv4 ADDRESSING--!!
+!!--4.1) IPv6 ADDRESSING--!!
+ipv6 unicast-routing
+
+int lo0
+ip add 50.50.1.1 255.255.255.255
+ipv6 enable
+ipv6 add 2001::1/128
+ipv6 add fe80::1 link-local
+no sh
+!
+int lo1
+ip add 50.50.10.10 255.255.255.255
+no sh
+!
+int g0/0/0
+desc #to VAN-CSW1#
+ip add 192.168.50.1 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168:50::2/127
+ipv6 add fe80::1 link-local
+no sh
+!
+int g0/0/1
+desc #to VAN-CSW2#
+ip add 192.168.50.5 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168:50::4/127
+ipv6 add fe80::1 link-local
+no sh
+!
+int s0/1/0
+desc #to BBY-RTR#
+ip add 192.168.0.6 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168::5/127
+ipv6 add fe80::1 link-local
+no sh
+!
+int s0/1/1
+desc #to RCH-RTR#
+ip add 192.168.0.9 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168::6/127
+ipv6 add fe80::1 link-local
+no sh
+!
+int s0/2/0
+desc #to ISP#
+ip add 20.26.50.253 255.255.255.252
+ipv6 enable
+ipv6 add 2001:db8:2026:50::6/64
+ipv6 add fe80::1 link-local
+no sh
+
+!!--3.12) NAMED ACL--!!
+ip access-list standard ALLOW_VAN-MANAGEMENT
+ permit 10.50.99.0 0.0.0.255
+!
+line vty 0 15
+ access-class ALLOW_VAN-MANAGEMENT in
+exit
+
+
+!!------------------------------------------------------!!
+!! PHASE 5: ROUTING !!
+
+!!--5.1) OSPFv2 and OSPFv3--!!
+!!--5.3) OSPF AUTHENTICATION--!!
+router ospf 2
+router-id 50.50.1.1
+passive lo0
+passive lo1
+auto-cost ref 10000
+area 0 authentication message-digest
+area 50 authentication message-digest
+area 50 range 10.50.0.0 255.255.0.0
+exit
+
+ipv6 router ospf 3
+router-id 50.50.10.10
+passive lo0
+auto-cost ref 10000
+exit
+
+int lo0
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+!
+int lo1
+ip ospf 2 area 0
+!
+int s0/1/0
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+!
+int s0/1/1
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+!
+int g0/0/0
+ip ospf 2 area 50
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+!
+int g0/0/1
+ip ospf 2 area 50
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+
+
+!!--5.4) STATIC ROUTING--!!
+ip route 0.0.0.0 0.0.0.0 20.26.50.254
+ipv6 route ::/0 2001:db8:2026:50::5
+
+router ospf 2
+default-information originate
+router ospf 3
+default-information originate
+
+
+
+!!------------------------------------------------------!!
+!! PHASE 6: NETWORK SERVICES !!
+
+!!--6.2) ENABLE DOMAIN LOOKUP, CONFIGURE DNS SERVER--!!
+ip domain lookup
+ip name-server 10.50.104.1
+
+
+!!--6.3) DHCPv4 POOLS--!!
+ip dhcp exc 10.50.99.1 10.50.99.20
+ip dhcp exc 10.50.99.241 10.50.99.254
+!
+ip dhcp exc 10.50.100.1 10.50.100.20
+ip dhcp exc 10.50.100.241 10.50.100.254
+ip dhcp exc 10.50.101.1 10.50.101.20
+ip dhcp exc 10.50.101.241 10.50.101.254
+ip dhcp exc 10.50.102.1 10.50.102.20
+ip dhcp exc 10.50.102.241 10.50.102.254
+ip dhcp exc 10.50.103.1 10.50.103.20
+ip dhcp exc 10.50.103.241 10.50.103.254
+!
+ip dhcp exc 10.50.110.1 10.50.110.20
+ip dhcp exc 10.50.110.241 10.50.110.254
+ip dhcp exc 10.50.111.1 10.50.111.20
+ip dhcp exc 10.50.111.241 10.50.111.254
+ip dhcp exc 10.50.112.1 10.50.112.20
+ip dhcp exc 10.50.112.241 10.50.112.254
+ip dhcp exc 10.50.113.1 10.50.113.20
+ip dhcp exc 10.50.113.241 10.50.113.254
+!
+ip dhcp exc 10.50.120.1 10.50.120.20
+ip dhcp exc 10.50.120.241 10.50.120.254
+ip dhcp exc 10.50.121.1 10.50.121.20
+ip dhcp exc 10.50.121.241 10.50.121.254
+ip dhcp exc 10.50.122.1 10.50.122.20
+ip dhcp exc 10.50.122.241 10.50.122.254
+ip dhcp exc 10.50.123.1 10.50.123.20
+ip dhcp exc 10.50.123.241 10.50.123.254
+
+
+ip dhcp pool VAN-Management
+ network 10.50.99.0 255.255.255.0
+ default-router 10.50.99.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+ option 43 ip 10.50.99.10
+!
+ip dhcp pool VAN-FL10-PCs
+ network 10.50.100.0 255.255.255.0
+ default-router 10.50.100.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL10-VoIP
+ network 10.50.101.0 255.255.255.0
+ default-router 10.50.101.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL10-WiFi
+ network 10.50.102.0 255.255.255.0
+ default-router 10.50.102.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL10-Printers
+ network 10.50.103.0 255.255.255.0
+ default-router 10.50.103.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+!
+ip dhcp pool VAN-FL11-PCs
+ network 10.50.110.0 255.255.255.0
+ default-router 10.50.110.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL11-VoIP
+ network 10.50.111.0 255.255.255.0
+ default-router 10.50.111.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL11-WiFi
+ network 10.50.112.0 255.255.255.0
+ default-router 10.50.112.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL11-Printers
+ network 10.50.113.0 255.255.255.0
+ default-router 10.50.113.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+!
+ip dhcp pool VAN-FL12-PCs
+ network 10.50.120.0 255.255.255.0
+ default-router 10.50.120.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL12-VoIP
+ network 10.50.121.0 255.255.255.0
+ default-router 10.50.121.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL12-WiFi
+ network 10.50.122.0 255.255.255.0
+ default-router 10.50.122.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL12-Printers
+ network 10.50.123.0 255.255.255.0
+ default-router 10.50.123.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+
+
+!!--6.5) STATIC NAT--!!
+int s0/2/0
+ip nat outside
+int g0/0/0
+ip nat inside
+int g0/0/1
+ip nat inside
+int s0/1/0
+ip nat inside
+int s0/1/1
+ip nat inside
+
+ip nat inside source static 10.50.104.1 20.26.50.121
+
+
+!!--6.6) NAT POOLS--!!
+access-list 1 permit 10.50.100.0 0.0.0.255
+access-list 2 permit 10.50.110.0 0.0.0.255
+access-list 3 permit 10.50.120.0 0.0.0.255
+access-list 4 permit 10.50.102.0 0.0.0.255
+access-list 5 permit 10.50.112.0 0.0.0.255
+access-list 6 permit 10.50.122.0 0.0.0.255
+!
+access-list 11 permit 10.51.80.0 0.0.0.255
+access-list 12 permit 10.51.90.0 0.0.0.255
+access-list 13 permit 10.51.82.0 0.0.0.255
+access-list 14 permit 10.51.92.0 0.0.0.255
+!
+access-list 21 permit 10.52.10.0 0.0.0.255
+access-list 22 permit 10.52.12.0 0.0.0.255
+
+ip nat pool VAN-FL10-PCs 20.26.50.0 20.26.50.31 netmask 255.255.255.224
+ip nat pool VAN-FL11-PCs 20.26.50.32 20.26.50.63 netmask 255.255.255.224
+ip nat pool VAN-FL12-PCs 20.26.50.64 20.26.50.95 netmask 255.255.255.224
+ip nat pool VAN-FL10-WiFi 20.26.50.96 20.26.50.103 netmask 255.255.255.248
+ip nat pool VAN-FL11-WiFi 20.26.50.104 20.26.50.111 netmask 255.255.255.248
+ip nat pool VAN-FL12-WiFi 20.26.50.112 20.26.50.119 netmask 255.255.255.248
+!
+ip nat pool BBY-FL8-PCs 20.26.50.128 20.26.50.143 netmask 255.255.255.240
+ip nat pool BBY-FL9-PCs 20.26.50.144 20.26.50.159 netmask 255.255.255.240
+ip nat pool BBY-FL8-WiFi 20.26.50.160 20.26.50.163 netmask 255.255.255.252
+ip nat pool BBY-FL9-WiFi 20.26.50.164 20.26.50.167 netmask 255.255.255.252
+!
+ip nat pool Richmond-PCs 20.26.50.193 20.26.50.193 netmask 255.255.255.255
+ip nat pool Richmond-WiFi 20.26.50.194 20.26.50.194 netmask 255.255.255.255
+
+
+!!--6.7) APPLY NAT POOLS--!!
+ip nat inside source list 1 pool VAN-FL10-PCs 
+ip nat inside source list 2 pool VAN-FL11-PCs 
+ip nat inside source list 3 pool VAN-FL12-PCs 
+ip nat inside source list 4 pool VAN-FL10-WiFi overload 
+ip nat inside source list 5 pool VAN-FL11-WiFi overload 
+ip nat inside source list 6 pool VAN-FL12-WiFi overload 
+!
+ip nat inside source list 11 pool BBY-FL8-PCs 
+ip nat inside source list 12 pool BBY-FL9-PCs 
+ip nat inside source list 13 pool BBY-FL8-WiFi overload 
+ip nat inside source list 14 pool BBY-FL9-WiFi overload
+!
+ip nat inside source list 21 pool Richmond-PCs overload
+ip nat inside source list 22 pool Richmond-WiFi overload
+
+
+
+!!--6.8) NTP--!!
+ntp authentication-key 1 md5 Sp33drun
+ntp trusted-key 1
+
+ntp server 216.239.35.4 key 1
+ntp master 5
+
+
+!!--6.10) SNMP and 6.11) SYSLOG--!!
+snmp-server community Speedrunning ro
+logging host 10.50.104.2
+logging trap debugging
+logging buffered 8192
+
+
+!!------------------------------------------------------!!
+!! PHASE 7: SECURING MANAGEMENT INFRASTRUCTURE !!
+
+!!--7.1) BASIC DEVICE HARDENING--!!
+enable secret speedrunning
+username runner priv 15 secret iamspeed
+login block-for 120 attempts 3 within 60
+
+line con 0
+login local
+exec-timeout 30 0
+logging synchronous
+
+exit
+
+
+!!--7.7) GENERATE CRYPTO SSH KEYS--!!
+crypto key gen rsa
+4096
+
+!!--7.8) ENABLE SSHv2--!!
+ip ssh version 2
+
+!!--7.9) CONFIGURE VTY LINES--!!
+line vty 0 15
+transport input ssh
+login local
+
+!!--7.10) 30-MINUTE TIMEOUT, SYNCHRONOUS LOGGING--!!
+exec-timeout 30 0
+logging sync
+
+
+
+
+!!------------------------------------------------------!!
+!! PHASE 8: GRE OVER IPSEC VPN !!
+
+
+
+!!--8.1) ISAKMP POLICY--!!
+crypto isakmp policy 10
+hash sha
+authentication pre-share
+group 5
+lifetime 86400
+encryption aes 256
+exit 
+
+!!--8.2) AUTHENTICATION KEY BINDING--!!
+crypto isakmp key onemoretime address 20.26.60.253
+crypto isakmp key onemoretime address 20.26.70.253
+
+!!--8.3) DEFINE TRANSFORM SET--!!
+crypto ipsec transform-set AES esp-aes 256 esp-sha-hmac
+mode tunnel
+
+!!--8.4) CRYPTO ACLs--!!
+ip access-list extended TOR-TUNNEL
+permit gre host 20.26.50.253 host 20.26.60.253
+
+ip access-list extended MTL-TUNNEL
+permit gre host 20.26.50.253 host 20.26.70.253
+
+!!--8.5) CRYPTO MAPS--!!
+crypto map GRE 10 ipsec-isakmp
+ match address TOR-TUNNEL
+ set peer 20.26.60.253
+ set transform-set AES
+!
+crypto map GRE 20 ipsec-isakmp
+ match address MTL-TUNNEL
+ set peer 20.26.70.253
+ set transform-set AES
+exit
+!
+int s0/2/0
+ crypto map GRE
+
+!!--8.6) TUNNEL INTERFACES--!!
+
+int tunnel0
+desc # to TOR-RTR # 
+ip add 1.1.1.1 255.255.255.252
+tunnel source s0/2/0
+tunnel destination 20.26.60.253
+tunnel mode gre ip
+no shut
+
+int tunnel1
+desc # to MTL-RTR # 
+ip add 3.3.3.1 255.255.255.252
+tunnel source s0/2/0
+tunnel destination 20.26.70.253
+tunnel mode gre ip
+no shut
+exit
+
+
+!!--8.7) STATIC ROUTE TO TORONTO AND MONTREAL--!!
+ip route 10.60.0.0 255.255.0.0 1.1.1.2
+ip route 10.70.0.0 255.255.0.0 3.3.3.2
+
+do wr
+
+
+
+
+
+
+
