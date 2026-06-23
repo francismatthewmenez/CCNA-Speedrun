@@ -1,0 +1,468 @@
+CCNA Speedrun Phase 6 Scripts
+
+
+--------------------------------------------------------
+!!--2)--!!
+
+!!--ALL NETWORK DEVICES--!!
+ip domain lookup
+ip name-server 10.50.104.1
+do wr
+
+
+--------------------------------------------------------
+!!--3)--!!
+
+!!--VAN-RTR--!!
+
+ip dhcp exc 10.50.99.1 10.50.99.20
+ip dhcp exc 10.50.99.241 10.50.99.254
+!
+ip dhcp exc 10.50.100.1 10.50.100.20
+ip dhcp exc 10.50.100.241 10.50.100.254
+ip dhcp exc 10.50.101.1 10.50.101.20
+ip dhcp exc 10.50.101.241 10.50.101.254
+ip dhcp exc 10.50.102.1 10.50.102.20
+ip dhcp exc 10.50.102.241 10.50.102.254
+ip dhcp exc 10.50.103.1 10.50.103.20
+ip dhcp exc 10.50.103.241 10.50.103.254
+!
+ip dhcp exc 10.50.110.1 10.50.110.20
+ip dhcp exc 10.50.110.241 10.50.110.254
+ip dhcp exc 10.50.111.1 10.50.111.20
+ip dhcp exc 10.50.111.241 10.50.111.254
+ip dhcp exc 10.50.112.1 10.50.112.20
+ip dhcp exc 10.50.112.241 10.50.112.254
+ip dhcp exc 10.50.113.1 10.50.113.20
+ip dhcp exc 10.50.113.241 10.50.113.254
+!
+ip dhcp exc 10.50.120.1 10.50.120.20
+ip dhcp exc 10.50.120.241 10.50.120.254
+ip dhcp exc 10.50.121.1 10.50.121.20
+ip dhcp exc 10.50.121.241 10.50.121.254
+ip dhcp exc 10.50.122.1 10.50.122.20
+ip dhcp exc 10.50.122.241 10.50.122.254
+ip dhcp exc 10.50.123.1 10.50.123.20
+ip dhcp exc 10.50.123.241 10.50.123.254
+
+
+ip dhcp pool VAN-Management
+ network 10.50.99.0 255.255.255.0
+ default-router 10.50.99.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+ option 43 ip 10.50.99.10
+!
+ip dhcp pool VAN-FL10-PCs
+ network 10.50.100.0 255.255.255.0
+ default-router 10.50.100.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL10-VoIP
+ network 10.50.101.0 255.255.255.0
+ default-router 10.50.101.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL10-WiFi
+ network 10.50.102.0 255.255.255.0
+ default-router 10.50.102.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL10-Printers
+ network 10.50.103.0 255.255.255.0
+ default-router 10.50.103.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+!
+ip dhcp pool VAN-FL11-PCs
+ network 10.50.110.0 255.255.255.0
+ default-router 10.50.110.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL11-VoIP
+ network 10.50.111.0 255.255.255.0
+ default-router 10.50.111.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL11-WiFi
+ network 10.50.112.0 255.255.255.0
+ default-router 10.50.112.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL11-Printers
+ network 10.50.113.0 255.255.255.0
+ default-router 10.50.113.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+!
+ip dhcp pool VAN-FL12-PCs
+ network 10.50.120.0 255.255.255.0
+ default-router 10.50.120.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL12-VoIP
+ network 10.50.121.0 255.255.255.0
+ default-router 10.50.121.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL12-WiFi
+ network 10.50.122.0 255.255.255.0
+ default-router 10.50.122.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool VAN-FL12-Printers
+ network 10.50.123.0 255.255.255.0
+ default-router 10.50.123.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+
+exit
+do wr
+
+
+----------------------
+!!--BBY-RTR--!!
+
+ip dhcp exc 10.51.99.1 10.51.99.20
+ip dhcp exc 10.51.99.241 10.51.99.254
+!
+ip dhcp exc 10.51.80.1 10.51.80.20
+ip dhcp exc 10.51.80.241 10.51.80.254
+ip dhcp exc 10.51.81.1 10.51.81.20
+ip dhcp exc 10.51.81.241 10.51.81.254
+ip dhcp exc 10.51.82.1 10.51.82.20
+ip dhcp exc 10.51.82.241 10.51.82.254
+ip dhcp exc 10.51.83.1 10.51.83.20
+ip dhcp exc 10.51.83.241 10.51.83.254
+!
+ip dhcp exc 10.51.90.1 10.51.90.20
+ip dhcp exc 10.51.90.241 10.51.90.254
+ip dhcp exc 10.51.91.1 10.51.91.20
+ip dhcp exc 10.51.91.241 10.51.91.254
+ip dhcp exc 10.51.92.1 10.51.92.20
+ip dhcp exc 10.51.92.241 10.51.92.254
+ip dhcp exc 10.51.93.1 10.51.93.20
+ip dhcp exc 10.51.93.241 10.51.93.254
+
+
+ip dhcp pool BBY-Management
+ network 10.51.99.0 255.255.255.0
+ default-router 10.51.99.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+ option 43 ip 10.50.99.10
+!
+ip dhcp pool BBY-FL8-PCs
+ network 10.51.80.0 255.255.255.0
+ default-router 10.51.80.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool BBY-FL8-VoIP
+ network 10.51.81.0 255.255.255.0
+ default-router 10.51.81.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool BBY-FL8-WiFi
+ network 10.51.82.0 255.255.255.0
+ default-router 10.51.82.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool BBY-FL8-Printers
+ network 10.51.83.0 255.255.255.0
+ default-router 10.51.83.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+!
+ip dhcp pool BBY-FL9-PCs
+ network 10.51.90.0 255.255.255.0
+ default-router 10.51.90.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool BBY-FL9-VoIP
+ network 10.51.91.0 255.255.255.0
+ default-router 10.51.91.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool BBY-FL9-WiFi
+ network 10.51.92.0 255.255.255.0
+ default-router 10.51.92.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool BBY-FL9-Printers
+ network 10.51.93.0 255.255.255.0
+ default-router 10.51.93.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+exit
+do wr
+
+----------------------
+!!--RCH-RTR--!!
+
+ip dhcp exc 10.52.99.1 10.52.99.20
+ip dhcp exc 10.52.99.241 10.52.99.254
+!
+ip dhcp exc 10.52.10.1 10.52.10.20
+ip dhcp exc 10.52.10.241 10.52.10.254
+ip dhcp exc 10.52.11.1 10.52.11.20
+ip dhcp exc 10.52.11.241 10.52.11.254
+ip dhcp exc 10.52.12.1 10.52.12.20
+ip dhcp exc 10.52.12.241 10.52.12.254
+ip dhcp exc 10.52.13.1 10.52.13.20
+ip dhcp exc 10.52.13.241 10.52.13.254
+
+
+ip dhcp pool RCH-Management
+ network 10.52.99.0 255.255.255.0
+ default-router 10.52.99.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+ option 43 ip 10.50.99.10
+!
+ip dhcp pool RCH-PCs
+ network 10.52.10.0 255.255.255.0
+ default-router 10.52.10.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool RCH-VoIP
+ network 10.52.11.0 255.255.255.0
+ default-router 10.52.11.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool RCH-WiFi
+ network 10.52.12.0 255.255.255.0
+ default-router 10.52.12.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool RCH-Printers
+ network 10.52.13.0 255.255.255.0
+ default-router 10.52.13.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--4)--!!
+
+!!--VAN-DSWx--!!
+int vlan 99
+ ip helper-address 50.50.1.1
+!
+int vlan 100
+ ip helper-address 50.50.1.1
+!
+int vlan 101
+ ip helper-address 50.50.1.1
+!
+int vlan 102
+ ip helper-address 50.50.1.1
+!
+int vlan 103
+ ip helper-address 50.50.1.1
+!
+!
+int vlan 110
+ ip helper-address 50.50.1.1
+!
+int vlan 111
+ ip helper-address 50.50.1.1
+!
+int vlan 112
+ ip helper-address 50.50.1.1
+!
+int vlan 113
+ ip helper-address 50.50.1.1
+!
+!
+int vlan 120
+ ip helper-address 50.50.1.1
+!
+int vlan 121
+ ip helper-address 50.50.1.1
+!
+int vlan 122
+ ip helper-address 50.50.1.1
+!
+int vlan 123
+ ip helper-address 50.50.1.1
+!
+exit
+do wr
+
+!!--BBY-DSWx--!!
+
+int vlan 99
+ ip helper-address 51.51.1.1
+!
+int vlan 80
+ ip helper-address 51.51.1.1
+!
+int vlan 81
+ ip helper-address 51.51.1.1
+!
+int vlan 82
+ ip helper-address 51.51.1.1
+!
+int vlan 83
+ ip helper-address 51.51.1.1
+!
+!
+int vlan 90
+ ip helper-address 51.51.1.1
+!
+int vlan 91
+ ip helper-address 51.51.1.1
+!
+int vlan 92
+ ip helper-address 51.51.1.1
+!
+int vlan 93
+ ip helper-address 51.51.1.1
+!
+exit
+do wr
+
+
+
+--------------------------------------------------------
+!!--5, 6, 7--!!
+
+!!--VAN-RTR--!!
+
+int s0/2/0
+ip nat outside
+int g0/0/0
+ip nat inside
+int g0/0/1
+ip nat inside
+int s0/1/0
+ip nat inside
+int s0/1/1
+ip nat inside
+
+!-5)-!
+ip nat inside source static 10.50.104.1 20.26.50.121
+
+!-6)-!
+access-list 1 permit 10.50.100.0 0.0.0.255
+access-list 2 permit 10.50.110.0 0.0.0.255
+access-list 3 permit 10.50.120.0 0.0.0.255
+access-list 4 permit 10.50.102.0 0.0.0.255
+access-list 5 permit 10.50.112.0 0.0.0.255
+access-list 6 permit 10.50.122.0 0.0.0.255
+!
+access-list 11 permit 10.51.80.0 0.0.0.255
+access-list 12 permit 10.51.90.0 0.0.0.255
+access-list 13 permit 10.51.82.0 0.0.0.255
+access-list 14 permit 10.51.92.0 0.0.0.255
+!
+access-list 21 permit 10.52.10.0 0.0.0.255
+access-list 22 permit 10.52.12.0 0.0.0.255
+
+ip nat pool VAN-FL10-PCs 20.26.50.0 20.26.50.31 netmask 255.255.255.224
+ip nat pool VAN-FL11-PCs 20.26.50.32 20.26.50.63 netmask 255.255.255.224
+ip nat pool VAN-FL12-PCs 20.26.50.64 20.26.50.95 netmask 255.255.255.224
+ip nat pool VAN-FL10-WiFi 20.26.50.96 20.26.50.103 netmask 255.255.255.248
+ip nat pool VAN-FL11-WiFi 20.26.50.104 20.26.50.111 netmask 255.255.255.248
+ip nat pool VAN-FL12-WiFi 20.26.50.112 20.26.50.119 netmask 255.255.255.248
+!
+ip nat pool BBY-FL8-PCs 20.26.50.128 20.26.50.143 netmask 255.255.255.240
+ip nat pool BBY-FL9-PCs 20.26.50.144 20.26.50.159 netmask 255.255.255.240
+ip nat pool BBY-FL8-WiFi 20.26.50.160 20.26.50.163 netmask 255.255.255.252
+ip nat pool BBY-FL9-WiFi 20.26.50.164 20.26.50.167 netmask 255.255.255.252
+!
+ip nat pool Richmond-PCs 20.26.50.193 20.26.50.193 netmask 255.255.255.255
+ip nat pool Richmond-WiFi 20.26.50.194 20.26.50.194 netmask 255.255.255.255
+
+
+!-7)-!
+ip nat inside source list 1 pool VAN-FL10-PCs 
+ip nat inside source list 2 pool VAN-FL11-PCs 
+ip nat inside source list 3 pool VAN-FL12-PCs 
+ip nat inside source list 4 pool VAN-FL10-WiFi overload 
+ip nat inside source list 5 pool VAN-FL11-WiFi overload 
+ip nat inside source list 6 pool VAN-FL12-WiFi overload 
+!
+ip nat inside source list 11 pool BBY-FL8-PCs 
+ip nat inside source list 12 pool BBY-FL9-PCs 
+ip nat inside source list 13 pool BBY-FL8-WiFi overload 
+ip nat inside source list 14 pool BBY-FL9-WiFi overload
+!
+ip nat inside source list 21 pool Richmond-PCs overload
+ip nat inside source list 22 pool Richmond-WiFi overload
+
+do wr
+
+
+--------------------------------------------------------
+!!--8) and 9)--!!
+
+!!--VAN-RTR--!!
+
+ntp authentication-key 1 md5 Sp33drun
+ntp trusted-key 1
+
+ntp server 216.239.35.4 key 1
+ntp master 5
+
+do wr
+
+!!--ALL NETWORK DEVICES--!!
+
+ntp authentication-key 1 md5 Sp33drun
+ntp trusted-key 1
+
+ntp server 50.50.10.10 key 1
+
+do wr
+
+
+--------------------------------------------------------
+!!--10) and 11)--!!
+
+!!--ALL NETWORK DEVICES--!!
+
+snmp-server community Speedrunning ro
+logging host 10.50.104.2
+logging trap debugging
+logging buffered 8192
+
+do wr
+
+
+
+
+
+
+
+
+
+
+
+
+

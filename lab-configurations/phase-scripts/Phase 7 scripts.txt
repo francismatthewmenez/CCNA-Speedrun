@@ -1,0 +1,80 @@
+CCNA Speedrun Phase 7 scripts
+
+
+
+--------------------------------------------------------
+!!--1)--!!
+
+ enable algorithm-type scrypt secret speedrunning
+ username runner priv 15 algorithm-type scrypt secret iamspeed
+!enable secret speedrunning
+!username runner priv 15 secret iamspeed
+
+login block-for 120 attempts 3 within 60
+
+!!EXCLUDING VANCOUVER ACCESS SWITCHES!!
+line con 0
+login local
+exec-timeout 30 0
+logging synchronous
+
+exit
+do wr
+
+
+
+--------------------------------------------------------
+!!--3, 4, 5, 6--!!
+!!--VANCOUVER ACCESS SWITCHES--!!
+
+!-3-!
+aaa new-model
+radius-server host 10.50.104.1
+radius-server key radiuspa55
+
+!-4-!
+aaa authentication login CONSOLE-LOGIN group radius local
+
+!-5-!
+line con 0
+login authentication CONSOLE-LOGIN
+
+!-6-!
+exec-timeout 30 0
+logging sync
+
+exit
+do wr
+
+--------------------------------------------------------
+!!--7,8,9,10--!!
+!!--ALL NETWORK DEVICES--!!
+
+!-7-!
+crypto key gen rsa
+4096
+
+!-8-!
+ip ssh version 2
+
+!-9-!
+line vty 0 15
+transport input ssh
+login local
+
+!-10-!
+exec-timeout 30 0
+logging sync
+
+exit
+do wr
+
+
+
+
+
+
+
+
+
+

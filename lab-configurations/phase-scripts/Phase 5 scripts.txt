@@ -1,0 +1,778 @@
+CCNA Speedrun Phase 5 scripts
+
+
+--------------------------------------------------------
+!!--1)--!!
+
+!!--VAN-RTR--!!
+ipv6 uni
+
+router ospf 2
+router-id 50.50.1.1
+passive lo0
+passive lo1
+auto-cost ref 10000
+area 50 range 10.50.0.0 255.255.0.0
+exit
+
+ipv6 router ospf 3
+router-id 50.50.10.10
+passive lo0
+auto-cost ref 10000
+exit
+
+int lo0
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+!
+int lo1
+ip ospf 2 area 0
+!
+int s0/1/0
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int s0/1/1
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g0/0/0
+ip ospf 2 area 50
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g0/0/1
+ip ospf 2 area 50
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+
+exit
+do wr
+
+
+----------------------------
+!!--BBY-RTR--!!
+ipv6 uni
+
+router ospf 2
+router-id 51.51.1.1
+passive lo0
+passive lo1
+auto-cost ref 10000
+area 51 range 10.51.0.0 255.255.0.0
+exit
+
+ipv6 router ospf 3
+router-id 51.51.10.10
+passive lo0
+auto-cost ref 10000
+exit
+
+int lo0
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+!
+int lo1
+ip ospf 2 area 0
+!
+int s0/1/0
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int s0/1/1
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g0/0/0
+ip ospf 2 area 51
+ipv6 ospf 3 area 51
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g0/0/1
+ip ospf 2 area 51
+ipv6 ospf 3 area 51
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+
+
+exit
+do wr
+
+----------------------------
+!!--RCH-RTR--!!
+ipv6 uni
+
+router ospf 2
+router-id 52.52.1.1
+passive lo0
+passive lo1
+auto-cost ref 10000
+area 52 range 10.52.0.0 255.255.0.0
+exit
+
+ipv6 router ospf 3
+router-id 52.52.10.10
+passive lo0
+auto-cost ref 10000
+exit
+
+int lo0
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+!
+int lo1
+ip ospf 2 area 0
+!
+int s0/1/0
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int s0/1/1
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g0/0/0.10
+ip ospf 2 area 52
+ipv6 ospf 3 area 52
+!
+int g0/0/0.11
+ip ospf 2 area 52
+ipv6 ospf 3 area 52
+!
+int g0/0/0.12
+ip ospf 2 area 52
+ipv6 ospf 3 area 52
+!
+int g0/0/0.13
+ip ospf 2 area 52
+ipv6 ospf 3 area 52
+
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--2)--!!
+
+!!--VAN-CSW1--!!
+router ospf 2
+router-id 50.50.2.1
+passive lo0
+passive lo1
+auto-cost ref 10000
+
+network 50.50.2.1 0.0.0.0 area 50
+network 50.50.20.10 0.0.0.0 area 50
+!
+network 192.168.50.9 0.0.0.0 area 50
+network 192.168.50.21 0.0.0.0 area 50
+network 192.168.50.13 0.0.0.0 area 50
+network 192.168.50.2 0.0.0.0 area 50
+exit
+
+ipv6 router ospf 3
+router-id 50.50.20.10
+passive lo0
+auto-cost ref 10000
+exit
+
+int lo0
+ipv6 ospf 3 area 50
+!
+int po1
+ipv6 ospf 3 area 50
+!
+int g1/0/13
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g1/0/14
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g1/0/24
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+
+exit
+do wr
+
+
+----------------------------
+!!--VAN-CSW2--!!
+
+router ospf 2
+router-id 50.50.2.2
+passive lo0
+passive lo1
+auto-cost ref 10000
+
+network 50.50.2.2 0.0.0.0 area 50
+network 50.50.20.20 0.0.0.0 area 50
+!
+network 192.168.50.10 0.0.0.0 area 50
+network 192.168.50.25 0.0.0.0 area 50
+network 192.168.50.17 0.0.0.0 area 50
+network 192.168.50.6 0.0.0.0 area 50
+exit
+
+ipv6 router ospf 3
+router-id 50.50.20.20
+passive lo0
+auto-cost ref 10000
+exit
+
+int lo0
+ipv6 ospf 3 area 50
+!
+int po1
+ipv6 ospf 3 area 50
+!
+int g1/0/13
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g1/0/14
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g1/0/24
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+
+exit
+do wr
+
+----------------------------
+!!--VAN-DSW1--!!
+router ospf 2
+router-id 50.50.3.1
+!
+passive lo0
+passive lo1
+!
+passive vlan100
+passive vlan101
+passive vlan102
+passive vlan103
+passive vlan104
+!
+passive vlan110
+passive vlan111
+passive vlan112
+passive vlan113
+!
+passive vlan120
+passive vlan121
+passive vlan122
+passive vlan123
+!
+auto-cost ref 10000
+!
+network 50.50.3.1 0.0.0.0 area 50
+network 50.50.30.10 0.0.0.0 area 50
+!
+network 192.168.50.22 0.0.0.0 area 50
+network 192.168.50.18 0.0.0.0 area 50
+!
+network 10.50.99.252 0.0.0.0 area 50
+network 10.50.100.252 0.0.0.0 area 50
+network 10.50.101.252 0.0.0.0 area 50
+network 10.50.102.252 0.0.0.0 area 50
+network 10.50.103.252 0.0.0.0 area 50
+network 10.50.104.252 0.0.0.0 area 50
+!
+network 10.50.110.252 0.0.0.0 area 50
+network 10.50.111.252 0.0.0.0 area 50
+network 10.50.112.252 0.0.0.0 area 50
+network 10.50.113.252 0.0.0.0 area 50
+!
+network 10.50.120.252 0.0.0.0 area 50
+network 10.50.121.252 0.0.0.0 area 50
+network 10.50.122.252 0.0.0.0 area 50
+network 10.50.123.252 0.0.0.0 area 50
+!
+exit
+
+ipv6 router ospf 3
+router-id 50.50.30.10
+!
+passive lo0
+!
+passive vlan100
+passive vlan101
+passive vlan102
+passive vlan103
+passive vlan104
+!
+passive vlan110
+passive vlan111
+passive vlan112
+passive vlan113
+!
+passive vlan120
+passive vlan121
+passive vlan122
+passive vlan123
+!
+auto-cost ref 10000
+exit
+
+int lo0
+ipv6 ospf 3 area 50
+!
+int g1/0/13
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g1/0/14
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+
+interface vlan 100
+ ipv6 ospf 3 area 50
+interface vlan 101
+ ipv6 ospf 3 area 50
+interface vlan 102
+ ipv6 ospf 3 area 50
+interface vlan 103
+ ipv6 ospf 3 area 50
+interface vlan 104
+ ipv6 ospf 3 area 50
+interface vlan 110
+ ipv6 ospf 3 area 50
+interface vlan 111
+ ipv6 ospf 3 area 50
+interface vlan 112
+ ipv6 ospf 3 area 50
+interface vlan 113
+ ipv6 ospf 3 area 50
+interface vlan 120
+ ipv6 ospf 3 area 50
+interface vlan 121
+ ipv6 ospf 3 area 50
+interface vlan 122
+ ipv6 ospf 3 area 50
+interface vlan 123
+ ipv6 ospf 3 area 50
+
+exit
+do wr
+
+
+----------------------------
+!!--VAN-DSW2--!!
+router ospf 2
+router-id 50.50.3.2
+!
+passive lo0
+passive lo1
+!
+passive vlan100
+passive vlan101
+passive vlan102
+passive vlan103
+passive vlan104
+!
+passive vlan110
+passive vlan111
+passive vlan112
+passive vlan113
+!
+passive vlan120
+passive vlan121
+passive vlan122
+passive vlan123
+!
+auto-cost ref 10000
+!
+network 50.50.3.2 0.0.0.0 area 50
+network 50.50.30.20 0.0.0.0 area 50
+!
+network 192.168.50.26 0.0.0.0 area 50
+network 192.168.50.14 0.0.0.0 area 50
+!
+network 10.50.99.253 0.0.0.0 area 50
+network 10.50.100.253 0.0.0.0 area 50
+network 10.50.101.253 0.0.0.0 area 50
+network 10.50.102.253 0.0.0.0 area 50
+network 10.50.103.253 0.0.0.0 area 50
+network 10.50.104.253 0.0.0.0 area 50
+!
+network 10.50.110.253 0.0.0.0 area 50
+network 10.50.111.253 0.0.0.0 area 50
+network 10.50.112.253 0.0.0.0 area 50
+network 10.50.113.253 0.0.0.0 area 50
+!
+network 10.50.120.253 0.0.0.0 area 50
+network 10.50.121.253 0.0.0.0 area 50
+network 10.50.122.253 0.0.0.0 area 50
+network 10.50.123.253 0.0.0.0 area 50
+!
+exit
+
+ipv6 router ospf 3
+router-id 50.50.30.20
+!
+passive lo0
+!
+passive vlan100
+passive vlan101
+passive vlan102
+passive vlan103
+passive vlan104
+!
+passive vlan110
+passive vlan111
+passive vlan112
+passive vlan113
+!
+passive vlan120
+passive vlan121
+passive vlan122
+passive vlan123
+!
+auto-cost ref 10000
+exit
+
+int lo0
+ipv6 ospf 3 area 50
+!
+int g1/0/13
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+!
+int g1/0/14
+ipv6 ospf 3 area 50
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+
+interface vlan 100
+ ipv6 ospf 3 area 50
+interface vlan 101
+ ipv6 ospf 3 area 50
+interface vlan 102
+ ipv6 ospf 3 area 50
+interface vlan 103
+ ipv6 ospf 3 area 50
+interface vlan 104
+ ipv6 ospf 3 area 50
+interface vlan 110
+ ipv6 ospf 3 area 50
+interface vlan 111
+ ipv6 ospf 3 area 50
+interface vlan 112
+ ipv6 ospf 3 area 50
+interface vlan 113
+ ipv6 ospf 3 area 50
+interface vlan 120
+ ipv6 ospf 3 area 50
+interface vlan 121
+ ipv6 ospf 3 area 50
+interface vlan 122
+ ipv6 ospf 3 area 50
+interface vlan 123
+ ipv6 ospf 3 area 50
+
+
+exit
+do wr
+
+
+----------------------------
+!!--BBY-DSW1--!!
+router ospf 2
+router-id 51.51.3.1
+!
+passive lo0
+passive lo1
+!
+passive vlan80
+passive vlan81
+passive vlan82
+passive vlan83
+!
+passive vlan90
+passive vlan91
+passive vlan92
+passive vlan93
+!
+auto-cost ref 10000
+!
+network 51.51.3.1 0.0.0.0 area 51
+network 51.51.30.10 0.0.0.0 area 51
+!
+network 192.168.51.2 0.0.0.0 area 51
+!
+network 10.51.99.252 0.0.0.0 area 51
+network 10.51.80.252 0.0.0.0 area 51
+network 10.51.81.252 0.0.0.0 area 51
+network 10.51.82.252 0.0.0.0 area 51
+network 10.51.83.252 0.0.0.0 area 51
+!
+network 10.51.90.252 0.0.0.0 area 51
+network 10.51.91.252 0.0.0.0 area 51
+network 10.51.92.252 0.0.0.0 area 51
+network 10.51.93.252 0.0.0.0 area 51
+!
+exit
+
+ipv6 router ospf 3
+router-id 51.51.30.10
+!
+passive lo0
+!
+passive vlan80
+passive vlan81
+passive vlan82
+passive vlan83
+!
+passive vlan90
+passive vlan91
+passive vlan92
+passive vlan93
+!
+auto-cost ref 10000
+exit
+
+int lo0
+ipv6 ospf 3 area 51
+!
+int g1/0/24
+ipv6 ospf 3 area 51
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+
+interface vlan 80
+ ipv6 ospf 3 area 51
+interface vlan 81
+ ipv6 ospf 3 area 51
+interface vlan 82
+ ipv6 ospf 3 area 51
+interface vlan 83
+ ipv6 ospf 3 area 51
+interface vlan 90
+ ipv6 ospf 3 area 51
+interface vlan 91
+ ipv6 ospf 3 area 51
+interface vlan 92
+ ipv6 ospf 3 area 51
+interface vlan 93
+ ipv6 ospf 3 area 51
+
+exit
+do wr
+
+
+----------------------------
+!!--BBY-DSW2--!!
+router ospf 2
+router-id 51.51.3.2
+!
+passive lo0
+passive lo1
+!
+passive vlan80
+passive vlan81
+passive vlan82
+passive vlan83
+!
+passive vlan90
+passive vlan91
+passive vlan92
+passive vlan93
+!
+auto-cost ref 10000
+!
+network 51.51.3.2 0.0.0.0 area 51
+network 51.51.30.20 0.0.0.0 area 51
+!
+network 192.168.51.6 0.0.0.0 area 51
+!
+network 10.51.99.253 0.0.0.0 area 51
+network 10.51.80.253 0.0.0.0 area 51
+network 10.51.81.253 0.0.0.0 area 51
+network 10.51.82.253 0.0.0.0 area 51
+network 10.51.83.253 0.0.0.0 area 51
+!
+network 10.51.90.253 0.0.0.0 area 51
+network 10.51.91.253 0.0.0.0 area 51
+network 10.51.92.253 0.0.0.0 area 51
+network 10.51.93.253 0.0.0.0 area 51
+!
+exit
+
+ipv6 router ospf 3
+router-id 51.51.30.20
+!
+passive lo0
+!
+passive vlan80
+passive vlan81
+passive vlan82
+passive vlan83
+!
+passive vlan90
+passive vlan91
+passive vlan92
+passive vlan93
+!
+auto-cost ref 10000
+exit
+
+int lo0
+ipv6 ospf 3 area 51
+!
+int g1/0/24
+ipv6 ospf 3 area 51
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+
+interface vlan 80
+ ipv6 ospf 3 area 51
+interface vlan 81
+ ipv6 ospf 3 area 51
+interface vlan 82
+ ipv6 ospf 3 area 51
+interface vlan 83
+ ipv6 ospf 3 area 51
+interface vlan 90
+ ipv6 ospf 3 area 51
+interface vlan 91
+ ipv6 ospf 3 area 51
+interface vlan 92
+ ipv6 ospf 3 area 51
+interface vlan 93
+ ipv6 ospf 3 area 51
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--3)--!!
+
+----------------------------
+!!--VAN-RTR--!!
+router ospf 2
+area 0 authentication message-digest
+area 50 authentication message-digest
+exit
+
+int s0/1/0
+ip ospf message-digest-key 1 md5 Sp33drun
+int s0/1/1
+ip ospf message-digest-key 1 md5 Sp33drun
+int range g0/0/0-1
+ip ospf message-digest-key 1 md5 Sp33drun
+
+do wr
+
+----------------------------
+!!--BBY-RTR--!!
+router ospf 2
+area 0 authentication message-digest
+area 51 authentication message-digest
+exit
+
+int s0/1/0
+ip ospf message-digest-key 1 md5 Sp33drun
+int s0/1/1
+ip ospf message-digest-key 1 md5 Sp33drun
+int range g0/0/0-1
+ip ospf message-digest-key 1 md5 Sp33drun
+
+do wr
+
+----------------------------
+!!--RCH-RTR--!!
+router ospf 2
+area 0 authentication message-digest
+exit
+
+int s0/1/0
+ip ospf message-digest-key 1 md5 Sp33drun
+int s0/1/1
+ip ospf message-digest-key 1 md5 Sp33drun
+
+do wr
+
+----------------------------
+!!--VAN-CSWx--!!
+router ospf 2
+area 50 authentication message-digest
+exit
+
+int po1
+ip ospf message-digest-key 1 md5 Sp33drun
+int range g1/0/13-14,g1/0/24
+ip ospf message-digest-key 1 md5 Sp33drun
+
+do wr
+
+----------------------------
+!!--VAN-DSWx--!!
+router ospf 2
+area 50 authentication message-digest
+exit
+
+int vlan 99
+ip ospf message-digest-key 1 md5 Sp33drun
+int range g1/0/13-14
+ip ospf message-digest-key 1 md5 Sp33drun
+
+do wr
+
+----------------------------
+!!--BBY-DSWx--!!
+router ospf 2
+area 51 authentication message-digest
+exit
+
+int vlan 99
+ip ospf message-digest-key 1 md5 Sp33drun
+int g1/0/24
+ip ospf message-digest-key 1 md5 Sp33drun
+
+do wr
+
+--------------------------------------------------------
+!!--4)--!!
+
+ip route 0.0.0.0 0.0.0.0 20.26.50.254
+ipv6 route ::/0 2001:db8:2026:50::5
+
+router ospf 2
+default-information originate
+router ospf 3
+default-information originate
+
+exit
+do wr
+
+

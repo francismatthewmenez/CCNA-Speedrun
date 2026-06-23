@@ -1,0 +1,890 @@
+CCNA Speedrun Phase 2 scripts
+
+
+--------------------------------------------------------
+!!--1)--!!
+!!--VAN-DSWx--!!
+int range g1/0/11-12
+no sh
+channel-protocol lacp
+channel-group 1 mode active
+int po1
+no sh
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--2)--!!
+!!--BBY-DSWx--!!
+int range g1/0/11-12
+no sh
+channel-protocol pagp
+channel-group 1 mode desirable
+int po1 
+no sh
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--3)--!!
+
+!!--VAN-ASW10--!!
+vlan 100
+name VAN-FL10-PCs
+vlan 101
+name VAN-FL10-VoIP
+vlan 102
+name VAN-FL10-WiFi
+vlan 103
+name VAN-FL10-Printers
+vlan 104
+name VAN-FL10-Servers
+vlan 99
+name VAN-Management
+
+exit
+do wr
+
+---------------------
+!!--VAN-ASW11--!!
+vlan 110
+name VAN-FL11-PCs
+vlan 111
+name VAN-FL11-VoIP
+vlan 112
+name VAN-FL11-WiFi
+vlan 113
+name VAN-FL11-Printers
+vlan 99
+name VAN-Management
+
+exit
+do wr
+
+---------------------
+!!--VAN-ASW12--!!
+vlan 120
+name VAN-FL12-PCs
+vlan 121
+name VAN-FL12-VoIP
+vlan 122
+name VAN-FL12-WiFi
+vlan 123
+name VAN-FL12-Printers
+vlan 99
+name VAN-Management
+
+exit
+do wr
+
+---------------------
+!!--VAN-DSWx--!!
+vlan 100
+name VAN-FL10-PCs
+vlan 101
+name VAN-FL10-VoIP
+vlan 102
+name VAN-FL10-WiFi
+vlan 103
+name VAN-FL10-Printers
+vlan 104
+name VAN-Servers
+!
+vlan 110
+name VAN-FL11-PCs
+vlan 111
+name VAN-FL11-VoIP
+vlan 112
+name VAN-FL11-WiFi
+vlan 113
+name VAN-FL11-Printers
+!
+vlan 120
+name VAN-FL12-PCs
+vlan 121
+name VAN-FL12-VoIP
+vlan 122
+name VAN-FL12-WiFi
+vlan 123
+name VAN-FL12-Printers
+!
+vlan 99
+name VAN-Management
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--4)--!!
+
+---------------------
+!!--BBY-ASW8--!!
+vlan 80
+name BBY-FL8-PCs
+vlan 81
+name BBY-FL8-VoIP
+vlan 82
+name BBY-FL8-WiFi
+vlan 83
+name BBY-FL8-Printers
+vlan 99
+name BBY-Management
+
+exit
+do wr
+
+---------------------
+!!--BBY-ASW9--!!
+vlan 90
+name BBY-FL9-PCs
+vlan 91
+name BBY-FL9-VoIP
+vlan 92
+name BBY-FL9-WiFi
+vlan 93
+name BBY-FL9-Printers
+vlan 99
+name BBY-Management
+
+exit
+do wr
+
+---------------------
+!!--BBY-DSWx--!!
+vlan 80
+name BBY-FL8-PCs
+vlan 81
+name BBY-FL8-VoIP
+vlan 82
+name BBY-FL8-WiFi
+vlan 83
+name BBY-FL8-Printers
+!
+vlan 90
+name BBY-FL9-PCs
+vlan 91
+name BBY-FL9-VoIP
+vlan 92
+name BBY-FL9-WiFi
+vlan 93
+name BBY-FL9-Printers
+!
+vlan 99
+name BBY-Management
+
+exit
+do wr
+
+
+
+--------------------------------------------------------
+!!--5)--!!
+!!--RCH-ASW1--!!
+vlan 10
+name RCH-PCs
+vlan 11
+name RCH-VoIP
+vlan 12
+name RCH-WiFi
+vlan 13
+name RCH-Printers
+vlan 99
+name RCH-Management
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--6) to 7)--!!
+
+!!--VAN-DSWx--!!
+int po1
+sw trunk enc dot1q
+sw m t 
+sw nonegotiate
+sw trunk nat vlan 999
+sw trunk all vlan 100-104,110-113,120-123,99,999
+
+int g1/0/1
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg
+sw trunk nat vlan 999
+sw trunk all vlan 100-104,99,999
+
+int g1/0/2
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg
+sw trunk nat vlan 999
+sw trunk all vlan 110-113,99,999
+
+int g1/0/3
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg
+sw trunk nat vlan 999
+sw trunk all vlan 120-123,99,999
+
+exit
+do wr
+
+---------------------
+!!--VAN-ASW10--!!
+int range g0/1-2
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg 
+sw trunk nat vlan 999
+sw trunk all vlan 100-104,99,999
+
+exit
+do wr
+
+---------------------
+!!--VAN-ASW11--!!
+int range g0/1-2
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg 
+sw trunk nat vlan 999
+sw trunk all vlan 110-113,99,999
+
+exit
+do wr
+
+---------------------
+!!--VAN-ASW12--!!
+int range g0/1-2
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg 
+sw trunk nat vlan 999
+sw trunk all vlan 120-123,99,999
+
+exit
+do wr
+
+---------------------
+!!--BBY-DSWx--!!
+int po1
+sw trunk enc dot1q
+sw m t 
+sw nonegotiate
+sw trunk nat vlan 999
+sw trunk all vlan 80-83,90-93,99,999
+
+int g1/0/1
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg
+sw trunk nat vlan 999
+sw trunk all vlan 80-83,99,999
+
+int g1/0/2
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg
+sw trunk nat vlan 999
+sw trunk all vlan 90-93,99,999
+
+exit
+do wr
+
+---------------------
+!!--BBY-ASW8--!!
+int range g0/1-2
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg 
+sw trunk nat vlan 999
+sw trunk all vlan 80-83,99,999
+
+exit
+do wr
+
+---------------------
+!!--BBY-ASW9--!!
+int range g0/1-2
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg 
+sw trunk nat vlan 999
+sw trunk all vlan 90-93,99,999
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--8)--!!
+
+!!--RCH-ASW1--!!
+int g0/1
+no sh
+sw trunk enc dot1q
+sw m t
+sw noneg
+sw trunk nat vlan 999
+sw trunk all vlan 10-13,99,999
+do wr
+
+
+--------------------------------------------------------
+!!--9), 10), 11)--!!
+
+!!--VAN-ASW10--!!
+int f0/1
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 99
+
+int f0/2
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 100
+sw voice vlan 101
+
+int f0/3
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 103
+
+int range f0/11-12
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 104
+do wr
+
+---------------------
+!!--VAN-ASW11--!!
+
+int f0/1
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 99
+
+int range f0/2-3
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 110
+sw voice vlan 111
+
+int f0/4
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 113
+do wr
+
+
+---------------------
+!!--VAN-ASW12--!!
+
+int f0/1
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 99
+
+int range f0/2-3
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 120
+sw voice vlan 121
+
+int f0/4
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 123
+do wr
+
+---------------------
+!!--BBY-ASW8--!!
+
+int f0/1
+no sh
+sw trunk enc dot1q
+sw mode trunk
+sw nonego
+sw trunk nat vlan 99
+sw trunk all vlan 82,99
+
+int f0/2
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 80
+sw voice vlan 81
+
+int f0/3
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 83
+do wr
+
+
+---------------------
+!!--BBY-ASW9--!!
+
+int f0/1
+no sh
+sw trunk enc dot1q
+sw mode trunk
+sw nonego
+sw trunk nat vlan 99
+sw trunk all vlan 92,99
+
+int f0/2
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 90
+sw voice vlan 91
+
+int f0/3
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 93
+do wr
+
+
+---------------------
+!!--RCH-ASW1--!!
+
+int f0/1
+no sh
+sw trunk enc dot1q
+sw mode trunk
+sw nonego
+sw trunk nat vlan 99
+sw trunk all vlan 12,99
+
+int f0/2
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 10
+sw voice vlan 11
+
+int f0/3
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 13
+do wr
+
+int f0/24
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 99
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--12)--!!
+
+!!--VAN-DSW1--!!
+int g1/0/24
+no sh
+sw trunk enc dot1q
+sw mode trunk
+sw nonego
+sw trunk nat vlan 99
+sw trunk all vlan 102,112,122,99
+
+
+--------------------------------------------------------
+!!--13)--!!
+
+!!--VAN-DSW1,BBY-DSW2--!!
+int g1/0/23
+no sh
+sw mode acc
+sw nonego
+sw acc vlan 99
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--14)--!!
+
+
+show commands to use:
+show int status
+show ip int bri | s down
+
+!!--VAN-DSW1--!!
+vlan 555
+name ParkingLot
+int range g1/0/4-10,g1/0/15-22,g1/1/1-4
+sw m a
+sw a vlan 555
+shut
+do wr
+
+---------------------
+!!--VAN-DSW2--!!
+vlan 555
+name ParkingLot
+int range g1/0/4-10,g1/0/15-24,g1/1/1-4
+sw m a
+sw a vlan 555
+shut
+do wr
+
+---------------------
+!!--VAN-ASW10--!!
+vlan 555
+name ParkingLot
+int range f0/4-10,f0/13-24
+sw m a
+sw a vlan 555
+shut
+do wr
+
+---------------------
+!!--VAN-ASW11/ASW12--!!
+vlan 555
+name ParkingLot
+int range f0/5-24
+sw m a
+sw a vlan 555
+shut
+do wr
+
+---------------------
+!!--BBY-DSW1--!!
+vlan 555
+name ParkingLot
+int range g1/0/3-10,g1/0/13-23,g1/1/1-4
+sw m a
+sw a vlan 555
+shut
+do wr
+
+---------------------
+!!--BBY-DSW2--!!
+vlan 555
+name ParkingLot
+int range g1/0/3-10,g1/0/13-22,g1/1/1-4
+sw m a
+sw a vlan 555
+shut
+do wr
+
+---------------------
+!!--BBY-ASW8/ASW9--!!
+vlan 555
+name ParkingLot
+int range f0/4-24
+sw m a
+sw a vlan 555
+shut
+do wr
+
+---------------------
+!!--RCH-ASW1--!!
+vlan 555
+name ParkingLot
+int range f0/4-23,g0/2
+sw m a
+sw a vlan 555
+shut
+do wr
+
+
+--------------------------------------------------------
+!!--15)--!!
+
+---------------------------
+!!--VAN-ASW10--!!
+int range f0/1,f0/3,f0/11-12
+ sw mode access
+ sw port-security
+ sw port-sec max 1
+ sw port-sec violation restrict
+ sw port-sec mac sticky
+
+int f0/2
+ sw mode access
+ sw port-security
+ sw port-sec max 2
+ sw port-sec violation restrict
+ sw port-sec mac sticky
+
+exit
+do wr
+
+---------------------------
+!!--VAN-ASW11/12--!!
+int range f0/1,f0/4
+ sw mode access
+ sw port-security
+ sw port-sec max 1
+ sw port-sec violation restrict
+ sw port-sec mac sticky
+
+int range f0/2-3
+ sw mode access
+ sw port-security
+ sw port-sec max 2
+ sw port-sec violation restrict
+ sw port-sec mac sticky
+
+exit
+do wr
+
+---------------------------
+!!--BBY-ASWx--!!
+int f0/1
+ sw mode access
+ sw port-security
+ sw port-sec max 20
+ sw port-sec violation restrict
+ sw port-sec mac sticky
+
+int f0/2
+ sw mode access
+ sw port-security
+ sw port-sec max 2
+ sw port-sec violation restrict
+ sw port-sec mac sticky
+
+int f0/3
+ sw mode access
+ sw port-security
+ sw port-sec max 1
+ sw port-sec violation restrict
+ sw port-sec mac sticky
+exit
+do wr
+
+---------------------------
+!!--RCH-ASW1--!!
+int f0/1
+ sw mode access
+ sw port-security
+ sw port-sec max 20
+ sw port-sec violation restrict
+ sw port-sec mac sticky
+
+int f0/2
+ sw mode access
+ sw port-security
+ sw port-sec max 2
+ sw port-sec violation restrict
+ sw port-sec mac sticky
+
+int range f0/3,f0/24
+ sw mode access
+ sw port-security
+ sw port-sec max 1
+ sw port-sec violation restrict
+ sw port-sec mac sticky
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--16), 17), 18)--!!
+
+---------------------------
+!!--VAN-ASW10--!!
+ip dhcp snooping
+ip dhcp snooping vlan 100,101,102,103,104,99
+no ip dhcp snooping information option
+ip arp inspection vlan 100,101,102,103,104,99
+ip arp inspection validate src-mac dst-mac ip
+
+int range g0/1-2
+ip dhcp snooping trust
+ip arp inspection trust
+
+int range f0/1-3,f0/11-12
+ip dhcp snooping limit rate 10
+no lldp transmit
+
+exit
+do wr
+
+---------------------------
+!!--VAN-ASW11--!!
+ip dhcp snooping
+ip dhcp snooping vlan 110,111,112,113,99
+no ip dhcp snooping information option
+ip arp inspection vlan 110,111,112,113,99
+ip arp inspection validate src-mac dst-mac ip
+
+int range g0/1-2
+ip dhcp snooping trust
+ip arp inspection trust
+
+int range f0/1-4
+ip dhcp snooping limit rate 10
+no lldp transmit
+
+exit
+do wr
+
+---------------------------
+!!--VAN-ASW12--!!
+ip dhcp snooping
+ip dhcp snooping vlan 120,121,122,33,99
+no ip dhcp snooping information option
+ip arp inspection vlan 120,121,122,33,99
+ip arp inspection validate src-mac dst-mac ip
+
+int range g0/1-2
+ip dhcp snooping trust
+ip arp inspection trust
+
+int range f0/1-4
+ip dhcp snooping limit rate 10
+no lldp transmit
+
+exit
+do wr
+
+---------------------------
+!!--BBY-ASW8--!!
+ip dhcp snooping
+ip dhcp snooping vlan 80,81,82,83,99
+no ip dhcp snooping information option
+ip arp inspection vlan 80,81,82,83,99
+ip arp inspection validate src-mac dst-mac ip
+
+int range g0/1-2
+ip dhcp snooping trust
+ip arp inspection trust
+
+int range f0/1-3
+ip dhcp snooping limit rate 10
+no lldp transmit
+
+exit
+do wr
+
+---------------------------
+!!--BBY-ASW9--!!
+ip dhcp snooping
+ip dhcp snooping vlan 90,91,92,93,99
+no ip dhcp snooping information option
+ip arp inspection vlan 90,91,92,93,99
+ip arp inspection validate src-mac dst-mac ip
+
+int range g0/1-2
+ip dhcp snooping trust
+ip arp inspection trust
+
+int range f0/1-3
+ip dhcp snooping limit rate 10
+no lldp transmit
+
+exit
+do wr
+
+---------------------------
+!!--RCH-ASW1--!!
+ip dhcp snooping
+ip dhcp snooping vlan 10,11,12,13,99
+no ip dhcp snooping information option
+ip arp inspection vlan 10,11,12,13,99
+ip arp inspection validate src-mac dst-mac ip
+
+int g0/1
+ip dhcp snooping trust
+ip arp inspection trust
+
+int range f0/1-3,f0/24
+ip dhcp snooping limit rate 10
+no lldp transmit
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--19) and 20)--!!
+
+!!--VAN-DSW1--!!
+span mode rapid
+span vlan 100-104,99 pri 0
+span vlan 110-113,120-123 pri 4096
+
+int g1/0/23
+span portfast
+span bpduguard enable
+int g1/0/24
+span portfast trunk
+do wr
+
+---------------------
+!!--VAN-DSW2--!!
+span mode rapid
+span vlan 110-113,120-123 pri 0
+span vlan 100-104,99 pri 4096
+do wr
+
+---------------------
+!!--BBY-DSW1--!!
+span mode rapid
+span vlan 80-83,99 pri 0
+span vlan 90-93 pri 4096
+do wr
+
+---------------------
+!!--BBY-DSW2--!!
+span mode rapid
+span vlan 90-93 pri 0
+span vlan 80-83,99 pri 4096
+
+int g1/0/23
+span portfast
+span bpduguard enable
+do wr
+
+---------------------
+!!--ACCESS SWITCHES--!!
+span mode rapid
+span portfast default
+span port bpduguard default
+do wr
+
+
+
+
+
+
+

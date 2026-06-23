@@ -1,0 +1,16 @@
+CCNA Speedrun Phase 1 scripts
+
+!!--ALL NETWORK DEVICES--!!
+
+!!--1) to 6)--!!
+en
+conf t
+service password-encryption
+hostname <hostname>
+ip domain-name speedrun.ccna
+no ip domain lookup
+banner motd # ONLY SPEEDRUNNERS ALLOWED ! #
+no cdp run
+lldp run
+
+do wr
