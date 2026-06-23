@@ -1,0 +1,788 @@
+CCNA Speedrun Phase 3 Scripts
+
+--------------------------------------------------------
+!!--1)--!!
+
+!!--VAN-CSWx--!!
+int range g1/0/11-12
+no sh
+no sw
+channel-protocol lacp
+channel-group 1 mode active
+int po1
+no sh
+no sw
+
+do wr
+
+--------------------------------------------------------
+!!--2)--!!
+
+!!--VAN-RTR--!!
+int s0/1/0
+desc #to BBY-RTR#
+ip add 192.168.0.6 255.255.255.252
+no sh
+!
+int s0/1/1
+desc #to RCH-RTR#
+ip add 192.168.0.9 255.255.255.252
+no sh
+!
+int s0/2/0
+desc #to ISP#
+ip add 20.26.6.2 255.255.255.252
+no sh
+!
+int g0/0/0
+desc #to VAN-CSW1#
+ip add 192.168.100.1 255.255.255.252
+no sh
+!
+int g0/0/1
+desc #to VAN-CSW2#
+ip add 192.168.100.5 255.255.255.252
+no sh
+!
+int l0
+ip add 100.1.1.1 255.255.255.255
+no sh
+!
+int lo1
+ip add 100.10.10.10 255.255.255.255
+no sh
+
+exit
+do wr
+
+
+!!--BBY-RTR--!!
+int s0/1/0
+desc #to VAN-RTR#
+ip add 192.168.0.5 255.255.255.252
+no sh
+!
+int s0/1/1
+desc #to RCH-RTR#
+ip add 192.168.0.1 255.255.255.252
+no sh
+!
+int g0/0/0
+desc #to BBY-DSW1#
+ip add 192.168.150.1 255.255.255.252
+no sh
+!
+int g0/0/1
+desc #to BBY-DSW2#
+ip add 192.168.150.5 255.255.255.252
+no sh
+!
+int l0
+ip add 150.1.1.1 255.255.255.255
+no sh
+!
+int lo1
+ip add 150.10.10.10 255.255.255.255
+no sh
+
+exit
+do wr
+
+
+!!--RCH-RTR--!!
+int s0/1/0
+desc #to VAN-RTR#
+ip add 192.168.0.10 255.255.255.252
+no sh
+!
+int s0/1/1
+desc #to BBY-RTR#
+ip add 192.168.0.2 255.255.255.252
+no sh
+!
+int g0/0/0
+no sh
+
+int g0/0/0.10
+encap dot1q 10
+ip add 10.200.10.254 255.255.255.0
+no sh
+int g0/0/0.11
+encap dot1q 11
+ip add 10.200.11.254 255.255.255.0
+no sh
+int g0/0/0.12
+encap dot1q 12
+ip add 10.200.12.254 255.255.255.0
+no sh
+int g0/0/0.13
+encap dot1q 13
+ip add 10.200.13.254 255.255.255.0
+no sh
+int g0/0/0.99
+encap dot1q 99
+ip add 10.200.99.254 255.255.255.0
+no sh
+
+int l0
+ip add 200.1.1.1 255.255.255.255
+no sh
+!
+int lo1
+ip add 200.10.10.10 255.255.255.255
+no sh
+
+exit
+do wr
+
+
+
+--------------------------------------------------------
+!!--3) to 5)--!!
+
+
+!!--VAN-CSW1--!!
+
+!--3)--!
+ip routing
+
+int po1
+no switchport
+ip add 192.168.100.9 255.255.255.252
+no sh
+!
+int g1/0/13
+desc #to VAN-DSW1#
+no sw
+ip add 192.168.100.21 255.255.255.252
+no sh
+!
+int g1/0/14
+desc #to VAN-DSW2#
+no sw
+ip add 192.168.100.13 255.255.255.252
+no sh
+!
+int g1/0/24
+desc #to VAN-RTR#
+no sw
+ip add 192.168.100.2 255.255.255.252
+no sh
+!
+int l0
+ip add 100.2.2.1 255.255.255.255
+no sh
+!
+int lo1
+ip add 100.20.20.10 255.255.255.255
+no sh
+
+exit 
+do wr
+
+
+!!--VAN-CSW2--!!
+
+!--3)--!
+ip routing
+
+int po1
+no sw
+ip add 192.168.100.10 255.255.255.252
+no sh
+!
+int g1/0/13
+desc #to VAN-DSW2#
+no sw
+ip add 192.168.100.25 255.255.255.252
+no sh
+!
+int g1/0/14
+desc #to VAN-DSW1#
+no sw
+ip add 192.168.100.17 255.255.255.252
+no sh
+!
+int g1/0/24
+desc #to VAN-RTR#
+no sw
+ip add 192.168.100.6 255.255.255.252
+no sh
+!
+int l0
+ip add 100.2.2.2 255.255.255.255
+no sh
+!
+int lo1
+ip add 100.20.20.20 255.255.255.255
+no sh
+
+exit 
+do wr
+
+!!--VAN-DSW1--!!
+ip routing
+
+int g1/0/13
+desc #to VAN-CSW1#
+no sw
+ip add 192.168.100.22 255.255.255.252
+no sh
+int g1/0/14
+desc #to VAN-CSW2#
+no sw
+ip add 192.168.100.18 255.255.255.252
+no sh
+!
+int vlan 10
+ip add 10.100.10.252 255.255.255.0
+no sh
+int vlan 11
+ip add 10.100.11.252 255.255.255.0
+no sh
+int vlan 12
+ip add 10.100.12.252 255.255.255.0
+no sh
+int vlan 13
+ip add 10.100.13.252 255.255.255.0
+no sh
+int vlan 14
+ip add 10.100.14.252 255.255.255.0
+no sh
+!
+int vlan 20
+ip add 10.100.20.252 255.255.255.0
+no sh
+int vlan 21
+ip add 10.100.21.252 255.255.255.0
+no sh
+int vlan 22
+ip add 10.100.22.252 255.255.255.0
+no sh
+int vlan 23
+ip add 10.100.23.252 255.255.255.0
+no sh
+!
+int vlan 30
+ip add 10.100.30.252 255.255.255.0
+no sh
+int vlan 31
+ip add 10.100.31.252 255.255.255.0
+no sh
+int vlan 32
+ip add 10.100.32.252 255.255.255.0
+no sh
+int vlan 33
+ip add 10.100.33.252 255.255.255.0
+no sh
+!
+int vlan 99
+ip add 10.100.99.252 255.255.255.0
+no sh
+!
+int l0
+ip add 100.3.3.1 255.255.255.255
+no sh
+!
+int lo1
+ip add 100.30.30.10 255.255.255.255
+no sh
+
+exit
+do wr
+
+
+--------------------------
+!!--VAN-DSW2--!!
+!--3)--!
+ip routing
+
+int g1/0/13
+desc #to VAN-CSW2#
+no sw
+ip add 192.168.100.26 255.255.255.252
+no sh
+int g1/0/14
+desc #to VAN-CSW1#
+no sw
+ip add 192.168.100.14 255.255.255.252
+no sh
+!
+int vlan 10
+ip add 10.100.10.253 255.255.255.0
+no sh
+int vlan 11
+ip add 10.100.11.253 255.255.255.0
+no sh
+int vlan 12
+ip add 10.100.12.253 255.255.255.0
+no sh
+int vlan 13
+ip add 10.100.13.253 255.255.255.0
+no sh
+int vlan 14
+ip add 10.100.14.253 255.255.255.0
+no sh
+!
+int vlan 20
+ip add 10.100.20.253 255.255.255.0
+no sh
+int vlan 21
+ip add 10.100.21.253 255.255.255.0
+no sh
+int vlan 22
+ip add 10.100.22.253 255.255.255.0
+no sh
+int vlan 23
+ip add 10.100.23.253 255.255.255.0
+no sh
+!
+int vlan 30
+ip add 10.100.30.253 255.255.255.0
+no sh
+int vlan 31
+ip add 10.100.31.253 255.255.255.0
+no sh
+int vlan 32
+ip add 10.100.32.253 255.255.255.0
+no sh
+int vlan 33
+ip add 10.100.33.253 255.255.255.0
+no sh
+!
+int vlan 99
+ip add 10.100.99.253 255.255.255.0
+no sh
+!
+int l0
+ip add 100.3.3.2 255.255.255.255
+no sh
+!
+int lo1
+ip add 100.30.30.20 255.255.255.255
+no sh
+
+exit
+do wr
+
+
+!!--BBY-DSW1--!!
+!--3)--!!
+ip routing
+
+int g1/0/24
+desc #to BBY-RTR#
+no sw
+ip add 192.168.150.2 255.255.255.252
+no sh
+
+
+int vlan 10
+ip add 10.150.10.252 255.255.255.0
+no sh
+int vlan 11
+ip add 10.150.11.252 255.255.255.0
+no sh
+int vlan 12
+ip add 10.150.12.252 255.255.255.0
+no sh
+int vlan 13
+ip add 10.150.13.252 255.255.255.0
+no sh
+!
+int vlan 20
+ip add 10.150.20.252 255.255.255.0
+no sh
+int vlan 21
+ip add 10.150.21.252 255.255.255.0
+no sh
+int vlan 22
+ip add 10.150.22.252 255.255.255.0
+no sh
+int vlan 23
+ip add 10.150.23.252 255.255.255.0
+no sh
+!
+int vlan 99
+ip add 10.150.99.252 255.255.255.0
+no sh
+!
+int l0
+ip add 150.3.3.1 255.255.255.255
+no sh
+!
+int lo1
+ip add 150.30.30.10 255.255.255.255
+no sh
+
+exit
+do wr
+
+
+!!--BBY-DSW2--!!
+!--3)--!
+ip routing
+
+int g1/0/24
+desc #to BBY-RTR#
+no sw
+ip add 192.168.150.6 255.255.255.252
+no sh
+
+
+int vlan 10
+ip add 10.150.10.253 255.255.255.0
+no sh
+int vlan 11
+ip add 10.150.11.253 255.255.255.0
+no sh
+int vlan 12
+ip add 10.150.12.253 255.255.255.0
+no sh
+int vlan 13
+ip add 10.150.13.253 255.255.255.0
+no sh
+!
+int vlan 20
+ip add 10.150.20.253 255.255.255.0
+no sh
+int vlan 21
+ip add 10.150.21.253 255.255.255.0
+no sh
+int vlan 22
+ip add 10.150.22.253 255.255.255.0
+no sh
+int vlan 23
+ip add 10.150.23.253 255.255.255.0
+no sh
+!
+int vlan 99
+ip add 10.150.99.253 255.255.255.0
+no sh
+!
+int l0
+ip add 150.3.3.2 255.255.255.255
+no sh
+!
+int lo1
+ip add 150.30.30.20 255.255.255.255
+no sh
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--6)--!!
+
+- VAN-SRV1: 10.100.13.101/24
+- VAN-SRV2: 10.100.13.102/24
+- gateway 10.100.13.254
+
+
+--------------------------------------------------------
+!!--7)--!!
+
+- VAN-ASW1: 10.100.99.1
+- VAN-ASW2: 10.100.99.2
+- VAN-ASW3: 10.100.99.3
+- BBY-ASW1: 10.150.99.1
+- BBY-ASW2: 10.150.99.2
+- RCH-ASW1: 10.200.99.1
+- gateway 10.x.99.254
+
+!!--ALL ACCESS SWITCHES--!!
+int vlan 99
+ip add 10.x.99.x 255.255.255.0
+no sh
+exit
+
+ip default-gateway 10.x.99.254
+
+exit
+do wr
+
+--------------------------------------------------------
+!!--8)--!!
+
+!!--VAN-CSWx--!!
+
+vlan 666
+name ParkingLot
+int range g1/0/1-10,g1/0/15-23,g1/1/1-4
+sw m a
+sw a vlan 666
+shut
+do wr
+
+
+--------------------------------------------------------
+!!--9)--!!
+
+!!--VAN-DSW1--!!
+!
+int vlan 99
+standby ver 2
+standby 99 ip 10.100.99.254
+standby 99 pri 110
+standby 99 preempt
+!
+int vlan 10
+standby ver 2
+standby 10 ip 10.100.10.254
+standby 10 pri 110
+standby 10 preempt
+!
+int vlan 11
+standby ver 2
+standby 11 ip 10.100.11.254
+standby 11 pri 110
+standby 11 preempt
+!
+int vlan 12
+standby ver 2
+standby 12 ip 10.100.12.254
+standby 12 pri 110
+standby 12 preempt
+!
+int vlan 13
+standby ver 2
+standby 13 ip 10.100.13.254
+standby 13 pri 110
+standby 13 preempt
+!
+int vlan 14
+standby ver 2
+standby 14 ip 10.100.14.254
+standby 14 pri 110
+standby 14 preempt
+!
+!
+!
+int vlan 20
+standby ver 2
+standby 20 ip 10.100.20.254
+!
+int vlan 21
+standby ver 2
+standby 21 ip 10.100.21.254
+!
+int vlan 22
+standby ver 2
+standby 22 ip 10.100.22.254
+!
+int vlan 23
+standby ver 2
+standby 23 ip 10.100.23.254
+!
+int vlan 30
+standby ver 2
+standby 30 ip 10.100.30.254
+!
+int vlan 31
+standby ver 2
+standby 31 ip 10.100.31.254
+!
+int vlan 32
+standby ver 2
+standby 32 ip 10.100.32.254
+!
+int vlan 33
+standby ver 2
+standby 33 ip 10.100.33.254
+!
+exit
+do wr
+
+!!--VAN-DSW2--!!
+
+int vlan 20
+standby ver 2
+standby 20 ip 10.100.20.254
+standby 20 pri 110
+standby 20 preempt
+!
+int vlan 21
+standby ver 2
+standby 21 ip 10.100.21.254
+standby 21 pri 110
+standby 21 preempt
+!
+int vlan 22
+standby ver 2
+standby 22 ip 10.100.22.254
+standby 22 pri 110
+standby 22 preempt
+!
+int vlan 23
+standby ver 2
+standby 23 ip 10.100.23.254
+standby 23 pri 110
+standby 23 preempt
+!
+int vlan 30
+standby ver 2
+standby 30 ip 10.100.30.254
+standby 30 pri 110
+standby 30 preempt
+!
+int vlan 31
+standby ver 2
+standby 31 ip 10.100.31.254
+standby 31 pri 110
+standby 31 preempt
+!
+int vlan 32
+standby ver 2
+standby 32 ip 10.100.32.254
+standby 32 pri 110
+standby 32 preempt
+!
+int vlan 33
+standby ver 2
+standby 33 ip 10.100.33.254
+standby 33 pri 110
+standby 33 preempt
+!
+!
+!
+int vlan 99
+standby ver 2
+standby 99 ip 10.100.99.254
+!
+int vlan 10
+standby ver 2
+standby 10 ip 10.100.10.254
+!
+int vlan 11
+standby ver 2
+standby 11 ip 10.100.11.254
+!
+int vlan 12
+standby ver 2
+standby 12 ip 10.100.12.254
+!
+int vlan 13
+standby ver 2
+standby 13 ip 10.100.13.254
+!
+int vlan 14
+standby ver 2
+standby 14 ip 10.100.14.254
+!
+exit
+do wr
+
+--------------------------------------------------------
+!!--10)--!!
+
+!!--BBY-DSW1--!!
+
+!
+int vlan 99
+standby ver 2
+standby 99 ip 10.150.99.254
+standby 99 pri 110
+standby 99 preempt
+!
+int vlan 10
+standby ver 2
+standby 10 ip 10.150.10.254
+standby 10 pri 110
+standby 10 preempt
+!
+int vlan 11
+standby ver 2
+standby 11 ip 10.150.11.254
+standby 11 pri 110
+standby 11 preempt
+!
+int vlan 12
+standby ver 2
+standby 12 ip 10.150.12.254
+standby 12 pri 110
+standby 12 preempt
+!
+int vlan 13
+standby ver 2
+standby 13 ip 10.150.13.254
+standby 13 pri 110
+standby 13 preempt
+!
+!
+!
+int vlan 20
+standby ver 2
+standby 20 ip 10.150.20.254
+!
+int vlan 21
+standby ver 2
+standby 21 ip 10.150.21.254
+!
+int vlan 22
+standby ver 2
+standby 22 ip 10.150.22.254
+!
+int vlan 23
+standby ver 2
+standby 23 ip 10.150.23.254
+!
+exit
+do wr
+
+--------------------------
+!!--BBY-DSW2--!!
+
+int vlan 20
+standby ver 2
+standby 20 ip 10.150.20.254
+standby 20 pri 110
+standby 20 preempt
+!
+int vlan 21
+standby ver 2
+standby 21 ip 10.150.21.254
+standby 21 pri 110
+standby 21 preempt
+!
+int vlan 22
+standby ver 2
+standby 22 ip 10.150.22.254
+standby 22 pri 110
+standby 22 preempt
+!
+int vlan 23
+standby ver 2
+standby 23 ip 10.150.23.254
+standby 23 pri 110
+standby 23 preempt
+!
+!
+!
+int vlan 99
+standby ver 2
+standby 99 ip 10.150.99.254
+!
+int vlan 10
+standby ver 2
+standby 10 ip 10.150.10.254
+!
+int vlan 11
+standby ver 2
+standby 11 ip 10.150.11.254
+!
+int vlan 12
+standby ver 2
+standby 12 ip 10.150.12.254
+!
+int vlan 13
+standby ver 2
+standby 13 ip 10.150.13.254
+!
+exit
+do wr
+
+
+
+
+

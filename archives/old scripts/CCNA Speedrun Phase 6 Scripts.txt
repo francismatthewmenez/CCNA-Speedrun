@@ -1,0 +1,581 @@
+CCNA Speedrun Phase 6 Scripts
+
+
+--------------------------------------------------------
+!!--2)--!!
+
+
+!!--ALL NETWORK DEVICES--!!
+ip domain-lookup
+ip name-server 10.100.13.101
+ip name-server 2001:10:100:13::101
+
+do wr
+
+
+--------------------------------------------------------
+!!--3)--!!
+
+
+!!--VAN-RTR--!!
+
+ip dhcp exc 10.100.99.1 10.100.99.20
+ip dhcp exc 10.100.99.241 10.100.99.254
+!
+ip dhcp exc 10.100.10.1 10.100.10.20
+ip dhcp exc 10.100.10.241 10.100.10.254
+ip dhcp exc 10.100.11.1 10.100.11.20
+ip dhcp exc 10.100.11.241 10.100.11.254
+ip dhcp exc 10.100.12.1 10.100.12.20
+ip dhcp exc 10.100.12.241 10.100.12.254
+ip dhcp exc 10.100.14.1 10.100.14.20
+ip dhcp exc 10.100.14.241 10.100.14.254
+!
+ip dhcp exc 10.100.20.1 10.100.20.20
+ip dhcp exc 10.100.20.241 10.100.20.254
+ip dhcp exc 10.100.21.1 10.100.21.20
+ip dhcp exc 10.100.21.241 10.100.21.254
+ip dhcp exc 10.100.22.1 10.100.22.20
+ip dhcp exc 10.100.22.241 10.100.22.254
+ip dhcp exc 10.100.23.1 10.100.23.20
+ip dhcp exc 10.100.23.241 10.100.23.254
+!
+ip dhcp exc 10.100.30.1 10.100.30.20
+ip dhcp exc 10.100.30.241 10.100.30.254
+ip dhcp exc 10.100.31.1 10.100.31.20
+ip dhcp exc 10.100.31.241 10.100.31.254
+ip dhcp exc 10.100.32.1 10.100.32.20
+ip dhcp exc 10.100.32.241 10.100.32.254
+ip dhcp exc 10.100.33.1 10.100.33.20
+ip dhcp exc 10.100.33.241 10.100.33.254
+
+
+ip dhcp pool VAN-Management
+ network 10.100.99.0 255.255.255.0
+ default-router 10.100.99.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+ option 43 ip 10.100.99.10
+!
+ip dhcp pool VAN-Floor1-PCs
+ network 10.100.10.0 255.255.255.0
+ default-router 10.100.10.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool VAN-Floor1-VoIP
+ network 10.100.11.0 255.255.255.0
+ default-router 10.100.11.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool VAN-Floor1-WiFi
+ network 10.100.12.0 255.255.255.0
+ default-router 10.100.12.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool VAN-Floor1-Printers
+ network 10.100.14.0 255.255.255.0
+ default-router 10.100.14.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+!
+ip dhcp pool VAN-Floor2-PCs
+ network 10.100.20.0 255.255.255.0
+ default-router 10.100.20.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool VAN-Floor2-VoIP
+ network 10.100.21.0 255.255.255.0
+ default-router 10.100.21.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool VAN-Floor2-WiFi
+ network 10.100.22.0 255.255.255.0
+ default-router 10.100.22.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool VAN-Floor2-Printers
+ network 10.100.23.0 255.255.255.0
+ default-router 10.100.23.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+!
+ip dhcp pool VAN-Floor3-PCs
+ network 10.100.30.0 255.255.255.0
+ default-router 10.100.30.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool VAN-Floor3-VoIP
+ network 10.100.31.0 255.255.255.0
+ default-router 10.100.31.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool VAN-Floor3-WiFi
+ network 10.100.32.0 255.255.255.0
+ default-router 10.100.32.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool VAN-Floor3-Printers
+ network 10.100.33.0 255.255.255.0
+ default-router 10.100.33.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+
+exit
+do wr
+
+
+!!--BBY-RTR--!!
+
+ip dhcp exc 10.150.99.1 10.150.99.20
+ip dhcp exc 10.150.99.241 10.150.99.254
+!
+ip dhcp exc 10.150.10.1 10.150.10.20
+ip dhcp exc 10.150.10.241 10.150.10.254
+ip dhcp exc 10.150.11.1 10.150.11.20
+ip dhcp exc 10.150.11.241 10.150.11.254
+ip dhcp exc 10.150.12.1 10.150.12.20
+ip dhcp exc 10.150.12.241 10.150.12.254
+ip dhcp exc 10.150.13.1 10.150.13.20
+ip dhcp exc 10.150.13.241 10.150.13.254
+!
+ip dhcp exc 10.150.20.1 10.150.20.20
+ip dhcp exc 10.150.20.241 10.150.20.254
+ip dhcp exc 10.150.21.1 10.150.21.20
+ip dhcp exc 10.150.21.241 10.150.21.254
+ip dhcp exc 10.150.22.1 10.150.22.20
+ip dhcp exc 10.150.22.241 10.150.22.254
+ip dhcp exc 10.150.23.1 10.150.23.20
+ip dhcp exc 10.150.23.241 10.150.23.254
+
+
+ip dhcp pool BBY-Management
+ network 10.150.99.0 255.255.255.0
+ default-router 10.150.99.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+ option 43 ip 10.100.99.10
+!
+ip dhcp pool BBY-Floor1-PCs
+ network 10.150.10.0 255.255.255.0
+ default-router 10.150.10.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool BBY-Floor1-VoIP
+ network 10.150.11.0 255.255.255.0
+ default-router 10.150.11.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool BBY-Floor1-WiFi
+ network 10.150.12.0 255.255.255.0
+ default-router 10.150.12.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool BBY-Floor1-Printers
+ network 10.150.13.0 255.255.255.0
+ default-router 10.150.13.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+!
+ip dhcp pool BBY-Floor2-PCs
+ network 10.150.20.0 255.255.255.0
+ default-router 10.150.20.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool BBY-Floor2-VoIP
+ network 10.150.21.0 255.255.255.0
+ default-router 10.150.21.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool BBY-Floor2-WiFi
+ network 10.150.22.0 255.255.255.0
+ default-router 10.150.22.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool BBY-Floor2-Printers
+ network 10.150.23.0 255.255.255.0
+ default-router 10.150.23.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+exit
+do wr
+
+
+!!--RCH-RTR--!!
+
+ip dhcp exc 10.200.99.1 10.200.99.20
+ip dhcp exc 10.200.99.241 10.200.99.254
+!
+ip dhcp exc 10.200.10.1 10.200.10.20
+ip dhcp exc 10.200.10.241 10.200.10.254
+ip dhcp exc 10.200.11.1 10.200.11.20
+ip dhcp exc 10.200.11.241 10.200.11.254
+ip dhcp exc 10.200.12.1 10.200.12.20
+ip dhcp exc 10.200.12.241 10.200.12.254
+ip dhcp exc 10.200.13.1 10.200.13.20
+ip dhcp exc 10.200.13.241 10.200.13.254
+
+
+ip dhcp pool RCH-Management
+ network 10.200.99.0 255.255.255.0
+ default-router 10.200.99.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+ option 43 ip 10.100.99.10
+!
+ip dhcp pool RCH-PCs
+ network 10.200.10.0 255.255.255.0
+ default-router 10.200.10.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool RCH-VoIP
+ network 10.200.11.0 255.255.255.0
+ default-router 10.200.11.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool RCH-WiFi
+ network 10.200.12.0 255.255.255.0
+ default-router 10.200.12.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+ip dhcp pool RCH-Printers
+ network 10.200.13.0 255.255.255.0
+ default-router 10.200.13.254
+ domain-name speedrun.ccna
+ dns-server 10.100.13.101
+!
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--4)--!!
+
+!!--VAN-RTR--!!
+ipv6 dhcp pool Vancouver-IPv6
+ address prefix 2001:10:50:10::/64
+ address prefix 2001:10:50:11::/64
+ address prefix 2001:10:50:12::/64
+ address prefix 2001:10:50:13::/64
+ address prefix 2001:10:50:20::/64
+ address prefix 2001:10:50:21::/64
+ address prefix 2001:10:50:22::/64
+ address prefix 2001:10:50:23::/64
+ address prefix 2001:10:50:30::/64
+ address prefix 2001:10:50:31::/64
+ address prefix 2001:10:50:32::/64
+ address prefix 2001:10:50:33::/64
+ domain-name speedrun.ccna
+ dns-server 2001:10:50:14::101
+!
+int range g0/0/0-1
+ ipv6 dhcp server Vancouver-IPv6
+ ipv6 nd managed-config-flag
+
+exit 
+do wr
+
+
+!!--BBY-RTR--!!
+ipv6 dhcp pool Burnaby-IPv6
+ address prefix 2001:10:150:10::/64
+ address prefix 2001:10:150:11::/64
+ address prefix 2001:10:150:12::/64
+ address prefix 2001:10:150:13::/64
+ address prefix 2001:10:150:20::/64
+ address prefix 2001:10:150:21::/64
+ address prefix 2001:10:150:22::/64
+ address prefix 2001:10:150:23::/64
+ domain-name speedrun.ccna
+ dns-server 2001:10:100:13::101
+!
+int range g0/0/0-1
+ ipv6 dhcp server Burnaby-IPv6
+ ipv6 nd managed-config-flag
+
+exit 
+do wr
+
+
+
+!!--RCH-RTR--!!
+ipv6 dhcp pool RCH-PCs-IPv6
+ address prefix 2001:10:200:10::/64
+ domain-name speedrun.ccna
+ dns-server 2001:10:100:13::101
+!
+ipv6 dhcp pool RCH-VoIP-IPv6
+ address prefix 2001:10:200:11::/64
+ domain-name speedrun.ccna
+ dns-server 2001:10:100:13::101
+!
+ipv6 dhcp pool RCH-WiFi-IPv6
+ address prefix 2001:10:200:12::/64
+ domain-name speedrun.ccna
+ dns-server 2001:10:100:13::101
+!
+ipv6 dhcp pool RCH-Printers-IPv6
+ address prefix 2001:10:200:13::/64
+ domain-name speedrun.ccna
+ dns-server 2001:10:100:13::101
+!
+int g0/0/0.10
+ ipv6 dhcp server RCH-PCs-IPv6
+ ipv6 nd managed-config-flag
+int g0/0/0.11
+ ipv6 dhcp server RCH-VoIP-IPv6
+ ipv6 nd managed-config-flag
+int g0/0/0.12
+ ipv6 dhcp server RCH-WiFi-IPv6
+ ipv6 nd managed-config-flag
+int g0/0/0.13
+ ipv6 dhcp server RCH-Printers-IPv6
+ ipv6 nd managed-config-flag
+
+exit 
+do wr
+
+
+
+
+--------------------------------------------------------
+!!--5)--!!
+(there's no ipv6 dhcp relay on packet tracer)
+
+!!--VAN-DSWx--!!
+
+int vlan 99
+ ip helper-address 100.1.1.1
+!
+int vlan 10
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+int vlan 11
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+int vlan 12
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+int vlan 14
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+!
+int vlan 20
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+int vlan 21
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+int vlan 22
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+int vlan 23
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+!
+int vlan 30
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+int vlan 31
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+int vlan 32
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+int vlan 33
+ ip helper-address 100.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::1
+ ipv6 nd managed-config-flag
+!
+exit
+do wr
+
+
+!!--BBY-DSWx--!!
+
+int vlan 99
+ ip helper-address 150.1.1.1
+!
+int vlan 10
+ ip helper-address 150.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::2
+ ipv6 nd managed-config-flag
+!
+int vlan 11
+ ip helper-address 150.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::2
+ ipv6 nd managed-config-flag
+!
+int vlan 12
+ ip helper-address 150.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::2
+ ipv6 nd managed-config-flag
+!
+int vlan 13
+ ip helper-address 150.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::2
+ ipv6 nd managed-config-flag
+!
+!
+int vlan 20
+ ip helper-address 150.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::2
+ ipv6 nd managed-config-flag
+!
+int vlan 21
+ ip helper-address 150.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::2
+ ipv6 nd managed-config-flag
+!
+int vlan 22
+ ip helper-address 150.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::2
+ ipv6 nd managed-config-flag
+!
+int vlan 23
+ ip helper-address 150.1.1.1
+ ipv6 enable
+ ipv6 dhcp relay destination 2001::2
+ ipv6 nd managed-config-flag
+!
+exit
+do wr
+
+--------------------------------------------------------
+!!--6) and 7)--!!
+
+!!--VAN-RTR--!!
+
+int s0/2/0
+ip nat outside
+int g0/0/0
+ip nat inside
+int g0/0/1
+ip nat inside
+int s0/1/0
+ip nat inside
+int s0/1/1
+ip nat inside
+
+access-list 1 permit 10.50.10.0 0.0.0.255
+access-list 1 permit 10.50.12.0 0.0.0.255
+access-list 1 permit 10.50.20.0 0.0.0.255
+access-list 1 permit 10.50.22.0 0.0.0.255
+access-list 1 permit 10.50.30.0 0.0.0.255
+access-list 1 permit 10.50.32.0 0.0.0.255
+!
+access-list 1 permit 10.51.10.0 0.0.0.255
+access-list 1 permit 10.51.12.0 0.0.0.255
+access-list 1 permit 10.51.20.0 0.0.0.255
+access-list 1 permit 10.51.22.0 0.0.0.255
+!
+access-list 1 permit 10.52.10.0 0.0.0.255
+access-list 1 permit 10.52.12.0 0.0.0.255
+
+ip nat inside source static 10.100.13.101 20.26.6.101
+ip nat pool SWIMMING-POOL 20.26.6.200 20.26.6.207 netmask 255.255.255.248
+ip nat inside source list 1 pool SWIMMING-POOL overload
+
+do wr
+
+
+--------------------------------------------------------
+!!--8) and 9)--!!
+
+!!--VAN-RTR--!!
+
+ntp server 216.239.35.4
+ntp master 5
+
+ntp authentication-key 1 md5 speedrun
+ntp trusted-key 1
+
+do wr
+
+!!--ALL NETWORK DEVICES--!!
+
+ntp authentication-key 1 md5 speedrun
+ntp trusted-key 1
+ntp server 100.10.10.10 key 1
+
+do wr
+
+--------------------------------------------------------
+!!--10) and 11)--!!
+
+!!--ALL NETWORK DEVICES--!!
+
+snmp-server community Speedrunning ro
+logging host 10.100.13.102
+logging trap debugging
+logging buffered 8192
+
+do wr
+
+
+
+
+
+

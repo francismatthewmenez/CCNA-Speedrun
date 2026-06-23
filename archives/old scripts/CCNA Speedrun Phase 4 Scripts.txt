@@ -1,0 +1,836 @@
+CCNA Speedrun Phase 4 Scripts
+
+--------------------------------------------------------
+!!--1)--!!
+
+!!--VAN-RTR--!!
+ipv6 unicast-routing
+
+int s0/1/0
+ipv6 enable
+desc #to BBY-RTR#
+ipv6 add 2001:192:168::5/127
+ipv6 add fe80::1 link-local
+no sh
+!
+int s0/1/1
+ipv6 enable
+desc #to RCH-RTR#
+ipv6 add 2001:192:168::6/127
+ipv6 add fe80::1 link-local
+no sh
+!
+int s0/2/0
+ipv6 enable
+desc #to ISP#
+ipv6 add 2001:db8:acad:2026::6/64
+ipv6 add fe80::1 link-local
+no sh
+!
+int g0/0/0
+ipv6 enable
+desc #to VAN-CSW1#
+ipv6 add 2001:192:168:100::2/127
+ipv6 add fe80::1 link-local
+no sh
+!
+int g0/0/1
+ipv6 enable
+desc #to VAN-CSW2#
+ipv6 add 2001:192:168:100::4/127
+ipv6 add fe80::1 link-local
+no sh
+!
+int l0
+ipv6 enable
+ipv6 add 2001::1/128
+ipv6 add fe80::1 link-local
+no sh
+
+exit
+do wr
+
+--------------------------
+!!--BBY-RTR--!!
+ipv6 unicast-routing
+
+int l0
+ipv6 enable
+ipv6 add 2001::2/128
+ipv6 add fe80::2 link-local
+no sh
+!
+int g0/0/0
+ipv6 enable
+desc #to BBY-DSW1#
+ipv6 add 2001:192:168:150::2/127
+ipv6 add fe80::2 link-local
+no sh
+!
+int g0/0/1
+ipv6 enable
+desc #to BBY-DSW2#
+ipv6 add 2001:192:168:150::4/127
+ipv6 add fe80::2 link-local
+no sh
+!
+int s0/1/0
+ipv6 enable
+desc #to VAN-RTR#
+ipv6 add 2001:192:168::4/127
+ipv6 add fe80::2 link-local
+no sh
+!
+int s0/1/1
+ipv6 enable
+desc #to RCH-RTR#
+ipv6 add 2001:192:168::2/127
+ipv6 add fe80::2 link-local
+no sh
+
+
+
+exit
+do wr
+
+--------------------------
+!!--RCH-RTR--!!
+ipv6 unicast-routing
+
+int s0/1/0
+ipv6 enable
+desc #to VAN-RTR#
+ipv6 add 2001:192:168::7/127
+ipv6 add fe80::3 link-local
+no sh
+!
+int s0/1/1
+ipv6 enable
+desc #to BBY-RTR#
+ipv6 add 2001:192:168::3/127
+ipv6 add fe80::3 link-local
+no sh
+!
+int g0/0/0.10
+ipv6 enable
+ipv6 add 2001:10:200:10::ffff/64
+ipv6 add fe80::3 link-local
+no sh
+!
+int g0/0/0.11
+ipv6 enable
+ipv6 add 2001:10:200:11::ffff/64
+ipv6 add fe80::3 link-local
+no sh
+!
+int g0/0/0.12
+ipv6 enable
+ipv6 add 2001:10:200:12::ffff/64
+ipv6 add fe80::3 link-local
+no sh
+!
+int g0/0/0.13
+ipv6 enable
+ipv6 add 2001:10:200:13::ffff/64
+ipv6 add fe80::3 link-local
+no sh
+!
+int g0/0/0.99
+ipv6 enable
+ipv6 add 2001:10:200:99::ffff/64
+ipv6 add fe80::3 link-local
+no sh
+!
+int l0
+ipv6 enable
+ipv6 add 2001::3/128
+ipv6 add fe80::3 link-local
+no sh
+
+exit
+do wr
+
+--------------------------------------------------------
+!!--2)--!!
+
+!!--VAN-CSW1--!!
+ipv6 unicast-routing
+
+int po1
+ipv6 enable
+ipv6 add 2001:192:168:100::6/127
+ipv6 add fe80::100:1 link-local
+no sh
+!
+int g1/0/13
+ipv6 enable
+ipv6 add 2001:192:168:100::c/127
+ipv6 add fe80::100:1 link-local
+no sh
+!
+int g1/0/14
+ipv6 enable
+ipv6 add 2001:192:168:100::8/127
+ipv6 add fe80::100:1 link-local
+no sh
+!
+int g1/0/24
+ipv6 enable
+ipv6 add 2001:192:168:100::3/127
+ipv6 add fe80::100:1 link-local
+no sh
+!
+int l0
+ipv6 enable
+ipv6 add 2001::100:1/128
+ipv6 add fe80::100:1 link-local
+no sh
+
+exit
+do wr
+
+
+--------------------------
+!!--VAN-CSW2--!!
+ipv6 unicast-routing
+
+int po1
+ipv6 enable
+ipv6 add 2001:192:168:100::7/127
+ipv6 add fe80::100:2 link-local
+no sh
+!
+int g1/0/13
+ipv6 enable
+ipv6 add 2001:192:168:100::e/127
+ipv6 add fe80::100:2 link-local
+no sh
+!
+int g1/0/14
+ipv6 enable
+ipv6 add 2001:192:168:100::a/127
+ipv6 add fe80::100:2 link-local
+no sh
+!
+int g1/0/24
+ipv6 enable
+ipv6 add 2001:192:168:100::5/127
+ipv6 add fe80::100:2 link-local
+no sh
+!
+int l0
+ipv6 enable
+ipv6 add 2001::100:2/128
+ipv6 add fe80::100:2 link-local
+no sh
+
+exit
+do wr
+
+--------------------------
+!!--VAN-DSW1--!!
+ipv6 unicast-routing
+
+int g1/0/13
+ipv6 enable
+ipv6 add 2001:192:168:100::d/127
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int g1/0/14
+ipv6 enable
+ipv6 add 2001:192:168:100::b/127
+ipv6 add fe80::100:3 link-local
+no sh
+!
+
+int vlan 10
+ipv6 enable
+ipv6 add 2001:10:100:10::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int vlan 11
+ipv6 enable
+ipv6 add 2001:10:100:11::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int vlan 12
+ipv6 enable
+ipv6 add 2001:10:100:12::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int vlan 13
+ipv6 enable
+ipv6 add 2001:10:100:13::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int vlan 14
+ipv6 enable
+ipv6 add 2001:10:100:14::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+!
+int vlan 20
+ipv6 enable
+ipv6 add 2001:10:100:20::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int vlan 21
+ipv6 enable
+ipv6 add 2001:10:100:21::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int vlan 22
+ipv6 enable
+ipv6 add 2001:10:100:22::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int vlan 23
+ipv6 enable
+ipv6 add 2001:10:100:23::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+!
+int vlan 30
+ipv6 enable
+ipv6 add 2001:10:100:30::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int vlan 31
+ipv6 enable
+ipv6 add 2001:10:100:31::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int vlan 32
+ipv6 enable
+ipv6 add 2001:10:100:32::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+int vlan 33
+ipv6 enable
+ipv6 add 2001:10:100:33::fffd/64
+ipv6 add fe80::100:3 link-local
+no sh
+!
+
+int l0
+ipv6 enable
+ipv6 add 2001::100:3/128
+ipv6 add fe80::100:3 link-local
+no sh
+
+exit
+do wr
+
+--------------------------
+!!--VAN-DSW2--!!
+ipv6 unicast-routing
+
+int g1/0/13
+ipv6 enable
+ipv6 add 2001:192:168:100::f/127
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int g1/0/14
+ipv6 enable
+ipv6 add 2001:192:168:100::9/127
+ipv6 add fe80::100:4 link-local
+no sh
+!
+
+int vlan 10
+ipv6 enable
+ipv6 add 2001:10:100:10::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int vlan 11
+ipv6 enable
+ipv6 add 2001:10:100:11::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int vlan 12
+ipv6 enable
+ipv6 add 2001:10:100:12::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int vlan 13
+ipv6 enable
+ipv6 add 2001:10:100:13::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int vlan 14
+ipv6 enable
+ipv6 add 2001:10:100:14::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+!
+int vlan 20
+ipv6 enable
+ipv6 add 2001:10:100:20::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int vlan 21
+ipv6 enable
+ipv6 add 2001:10:100:21::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int vlan 22
+ipv6 enable
+ipv6 add 2001:10:100:22::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int vlan 23
+ipv6 enable
+ipv6 add 2001:10:100:23::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+!
+int vlan 30
+ipv6 enable
+ipv6 add 2001:10:100:30::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int vlan 31
+ipv6 enable
+ipv6 add 2001:10:100:31::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int vlan 32
+ipv6 enable
+ipv6 add 2001:10:100:32::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+int vlan 33
+ipv6 enable
+ipv6 add 2001:10:100:33::fffe/64
+ipv6 add fe80::100:4 link-local
+no sh
+!
+
+int l0
+ipv6 enable
+ipv6 add 2001::100:4/128
+ipv6 add fe80::100:4 link-local
+no sh
+
+exit
+do wr
+
+
+--------------------------------------------------------
+!!--3)--!!
+
+!!--BBY-DSW1--!!
+ipv6 unicast-routing
+
+int g1/0/24
+ipv6 enable
+ipv6 add 2001:192:168:150::3/127
+ipv6 add fe80::150:1 link-local
+no sh
+!
+
+int vlan 10
+ipv6 enable
+ipv6 add 2001:10:150:10::fffd/64
+ipv6 add fe80::150:1 link-local
+no sh
+!
+int vlan 11
+ipv6 enable
+ipv6 add 2001:10:150:11::fffd/64
+ipv6 add fe80::150:1 link-local
+no sh
+!
+int vlan 12
+ipv6 enable
+ipv6 add 2001:10:150:12::fffd/64
+ipv6 add fe80::150:1 link-local
+no sh
+!
+int vlan 13
+ipv6 enable
+ipv6 add 2001:10:150:13::fffd/64
+ipv6 add fe80::150:1 link-local
+no sh
+!
+
+int vlan 20
+ipv6 enable
+ipv6 add 2001:10:150:20::fffd/64
+ipv6 add fe80::150:1 link-local
+no sh
+!
+int vlan 21
+ipv6 enable
+ipv6 add 2001:10:150:21::fffd/64
+ipv6 add fe80::150:1 link-local
+no sh
+!
+int vlan 22
+ipv6 enable
+ipv6 add 2001:10:150:22::fffd/64
+ipv6 add fe80::150:1 link-local
+no sh
+!
+int vlan 23
+ipv6 enable
+ipv6 add 2001:10:150:23::fffd/64
+ipv6 add fe80::150:1 link-local
+no sh
+!
+
+int l0
+ipv6 enable
+ipv6 add 2001::150:1/128
+ipv6 add fe80::150:1 link-local
+no sh
+!
+
+exit
+do wr
+
+--------------------------
+!!--BBY-DSW2--!!
+ipv6 unicast-routing
+
+int g1/0/24
+ipv6 enable
+ipv6 add 2001:192:168:150::5/127
+ipv6 add fe80::150:2 link-local
+no sh
+!
+
+int vlan 10
+ipv6 enable
+ipv6 add 2001:10:150:10::fffe/64
+ipv6 add fe80::150:2 link-local
+no sh
+!
+int vlan 11
+ipv6 enable
+ipv6 add 2001:10:150:11::fffe/64
+ipv6 add fe80::150:2 link-local
+no sh
+!
+int vlan 12
+ipv6 enable
+ipv6 add 2001:10:150:12::fffe/64
+ipv6 add fe80::150:2 link-local
+no sh
+!
+int vlan 13
+ipv6 enable
+ipv6 add 2001:10:150:13::fffe/64
+ipv6 add fe80::150:2 link-local
+no sh
+!
+
+int vlan 20
+ipv6 enable
+ipv6 add 2001:10:150:20::fffe/64
+ipv6 add fe80::150:2 link-local
+no sh
+!
+int vlan 21
+ipv6 enable
+ipv6 add 2001:10:150:21::fffe/64
+ipv6 add fe80::150:2 link-local
+no sh
+!
+int vlan 22
+ipv6 enable
+ipv6 add 2001:10:150:22::fffe/64
+ipv6 add fe80::150:2 link-local
+no sh
+!
+int vlan 23
+ipv6 enable
+ipv6 add 2001:10:150:23::fffe/64
+ipv6 add fe80::150:2 link-local
+no sh
+!
+
+int l0
+ipv6 enable
+ipv6 add 2001::150:2/128
+ipv6 add fe80::150:2 link-local
+no sh
+!
+
+exit
+do wr
+
+--------------------------------------------------------
+!!--4)--!!
+
+- VAN-SRV1: 2001:10:100:13::101/64
+- VAN-SRV2: 2001:10:100:13::102/64
+- gateway 2001:10:100:13::ffff
+
+
+--------------------------------------------------------
+!!--5)--!!
+
+!!--ALL ACCESS SWITCHES--!!
+sdm prefer dual-ipv4-and-ipv6 default
+do wr
+do reload
+
+--------------------------------------------------------
+!!--6)--!!
+
+!!--VAN-DSW1--!!
+
+int vlan 10
+standby ver 2
+standby 100 ipv6 2001:10:50:10::ffff/64
+standby 100 pri 110
+standby 100 preempt
+!
+int vlan 11
+standby ver 2
+standby 110 ipv6 2001:10:50:11::ffff/64
+standby 110 pri 110
+standby 110 preempt
+!
+int vlan 12
+standby ver 2
+standby 120 ipv6 2001:10:50:12::ffff/64
+standby 120 pri 110
+standby 120 preempt
+!
+int vlan 13
+standby ver 2
+standby 130 ipv6 2001:10:50:13::ffff/64
+standby 130 pri 110
+standby 130 preempt
+!
+int vlan 14
+standby ver 2
+standby 140 ipv6 2001:10:50:14::ffff/64
+standby 140 pri 110
+standby 140 preempt
+!
+!
+!
+int vlan 20
+standby ver 2
+standby 200 ipv6 2001:10:50:20::ffff/64
+!
+int vlan 21
+standby ver 2
+standby 210 ipv6 2001:10:50:21::ffff/64
+!
+int vlan 22
+standby ver 2
+standby 220 ipv6 2001:10:50:22::ffff/64
+!
+int vlan 23
+standby ver 2
+standby 230 ipv6 2001:10:50:23::ffff/64
+!
+!
+int vlan 30
+standby ver 2
+standby 300 ipv6 2001:10:50:30::ffff/64
+!
+int vlan 31
+standby ver 2
+standby 310 ipv6 2001:10:50:31::ffff/64
+!
+int vlan 32
+standby ver 2
+standby 320 ipv6 2001:10:50:32::ffff/64
+!
+int vlan 33
+standby ver 2
+standby 330 ipv6 2001:10:50:33::ffff/64
+!
+exit
+do wr
+
+--------------------------
+!!--VAN-DSW2--!!
+int vlan 20
+standby ver 2
+standby 200 ipv6 2001:10:50:20::ffff/64
+standby 200 pri 110
+standby 200 preempt
+!
+int vlan 21
+standby ver 2
+standby 210 ipv6 2001:10:50:21::ffff/64
+standby 210 pri 110
+standby 210 preempt
+!
+int vlan 22
+standby ver 2
+standby 220 ipv6 2001:10:50:22::ffff/64
+standby 220 pri 110
+standby 220 preempt
+!
+int vlan 23
+standby ver 2
+standby 230 ipv6 2001:10:50:23::ffff/64
+standby 230 pri 110
+standby 230 preempt
+!
+!
+int vlan 30
+standby ver 2
+standby 300 ipv6 2001:10:50:30::ffff/64
+standby 300 pri 110
+standby 300 preempt
+!
+int vlan 31
+standby ver 2
+standby 310 ipv6 2001:10:50:31::ffff/64
+standby 310 pri 110
+standby 310 preempt
+!
+int vlan 32
+standby ver 2
+standby 320 ipv6 2001:10:50:32::ffff/64
+standby 320 pri 110
+standby 320 preempt
+!
+int vlan 33
+standby ver 2
+standby 330 ipv6 2001:10:50:33::ffff/64
+standby 330 pri 110
+standby 330 preempt
+!
+!
+int vlan 10
+standby ver 2
+standby 100 ipv6 2001:10:50:10::ffff/64
+!
+int vlan 11
+standby ver 2
+standby 110 ipv6 2001:10:50:11::ffff/64
+!
+int vlan 12
+standby ver 2
+standby 120 ipv6 2001:10:50:12::ffff/64
+!
+int vlan 13
+standby ver 2
+standby 130 ipv6 2001:10:50:13::ffff/64
+!
+int vlan 14
+standby ver 2
+standby 140 ipv6 2001:10:50:14::ffff/64
+!
+exit
+do wr
+
+--------------------------------------------------------
+!!--7)--!!
+
+!!--BBY-DSW1--!!
+int vlan 10
+standby 100 ipv6 2001:10:51:10::ffff/64
+standby 100 pri 110
+standby 100 preempt
+!
+int vlan 11
+standby 110 ipv6 2001:10:51:11::ffff/64
+standby 110 pri 110
+standby 110 preempt
+!
+int vlan 12
+standby 120 ipv6 2001:10:51:12::ffff/64
+standby 120 pri 110
+standby 120 preempt
+!
+int vlan 13
+standby 130 ipv6 2001:10:51:13::ffff/64
+standby 130 pri 110
+standby 130 preempt
+!
+!
+!
+int vlan 20
+standby 200 ipv6 2001:10:51:20::ffff/64
+!
+int vlan 21
+standby 210 ipv6 2001:10:51:21::ffff/64
+!
+int vlan 22
+standby 220 ipv6 2001:10:51:22::ffff/64
+!
+int vlan 23
+standby 230 ipv6 2001:10:51:23::ffff/64
+!
+exit
+do wr
+
+--------------------------
+!!--BBY-DSW2--!!
+int vlan 20
+standby 200 ipv6 2001:10:51:20::ffff/64
+standby 200 pri 110
+standby 200 preempt
+!
+int vlan 21
+standby 210 ipv6 2001:10:51:21::ffff/64
+standby 210 pri 110
+standby 210 preempt
+!
+int vlan 22
+standby 220 ipv6 2001:10:51:22::ffff/64
+standby 220 pri 110
+standby 220 preempt
+!
+int vlan 23
+standby 230 ipv6 2001:10:51:23::ffff/64
+standby 230 pri 110
+standby 230 preempt
+!
+!
+!
+int vlan 10
+standby 100 ipv6 2001:10:51:10::ffff/64
+!
+int vlan 11
+standby 110 ipv6 2001:10:51:11::ffff/64
+!
+int vlan 12
+standby 120 ipv6 2001:10:51:12::ffff/64
+!
+int vlan 13
+standby 130 ipv6 2001:10:51:13::ffff/64
+!
+exit
+do wr
+
+
+
+
+
