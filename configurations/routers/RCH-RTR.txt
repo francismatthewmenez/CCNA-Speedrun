@@ -1,0 +1,343 @@
+!!------------------------------------------------------!!
+!! PHASE 1: BASIC DEVICE INITIALISATION !!
+
+en
+conf t
+
+service password-encryption
+hostname RCH-RTR
+ip domain-name speedrun.ccna
+no ip domain lookup
+banner motd # ONLY SPEEDRUNNERS ALLOWED ! #
+no cdp run
+lldp run
+
+
+!!------------------------------------------------------!!
+!! PHASE 3 and 4: LAYER 3 CONFIGURATION (IPv4 and IPv6) !!
+
+!!--3.2) IPv4 ADDRESSING--!!
+!!--4.1) IPv6 ADDRESSING--!!
+
+ipv6 unicast-routing
+
+int l0
+ip add 52.52.1.1 255.255.255.255
+ipv6 enable
+ipv6 add 2001::3/128
+ipv6 add fe80::3 link-local
+no sh
+!
+int lo1
+ip add 52.52.10.10 255.255.255.255
+no sh
+!
+int g0/0/0
+no sh
+!
+int g0/0/0.10
+encap dot1q 10
+ip add 10.52.10.254 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:52:10::ffff/64
+ipv6 add fe80::52:10 link-local
+no sh
+!
+int g0/0/0.11
+encap dot1q 11
+ip add 10.52.11.254 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:52:11::ffff/64
+ipv6 add fe80::52:11 link-local
+no sh
+!
+int g0/0/0.12
+encap dot1q 12
+ip add 10.52.12.254 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:52:12::ffff/64
+ipv6 add fe80::52:12 link-local
+no sh
+!
+int g0/0/0.13
+encap dot1q 13
+ip add 10.52.13.254 255.255.255.0
+ipv6 enable
+ipv6 add 2001:10:52:13::ffff/64
+ipv6 add fe80::52:13 link-local
+no sh
+!
+int g0/0/0.99
+encap dot1q 99
+ip add 10.52.99.254 255.255.255.0
+no sh
+!
+int s0/1/0
+desc #to VAN-RTR#
+ip add 192.168.0.10 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:52::7/127
+ipv6 add fe80::3 link-local
+no sh
+!
+int s0/1/1
+desc #to BBY-RTR#
+ip add 192.168.0.2 255.255.255.252
+ipv6 enable
+ipv6 add 2001:192:168::3/127
+ipv6 add fe80::3 link-local
+no sh
+
+
+!!--3.12) NAMED ACL--!!
+
+!!--ALLOW-MANAGEMENT--!!
+ip access-list standard ALLOW_RCH-MANAGEMENT
+ permit 10.52.99.0 0.0.0.255
+!
+line vty 0 15
+ access-class ALLOW_RCH-MANAGEMENT in
+exit
+
+!!--VOIP-IN--!!
+ip access-list extended VOIP-IN
+ permit udp any any eq bootps
+ !
+ permit ip any 10.50.101.0 0.0.0.255
+ permit ip any 10.50.111.0 0.0.0.255
+ permit ip any 10.50.121.0 0.0.0.255
+ permit ip any 10.51.81.0 0.0.0.255
+ permit ip any 10.51.91.0 0.0.0.255
+ permit ip any 10.52.11.0 0.0.0.255
+ ! 
+ permit udp any host 224.0.0.102 eq 1985
+ permit udp any host 50.50.10.10
+ permit tcp any any eq 2000
+ permit udp any any eq 5060
+ permit tcp any any eq 5060
+ permit tcp any any eq 5061
+ permit udp any any range 16384 32767
+ !
+ deny ip any any
+exit
+!
+int g0/0/0.11
+ ip access-group VOIP-IN in
+exit
+
+!!--PRINTER-IN--!!
+ip access-list extended PRINTER-IN
+ permit udp any any eq bootps
+ permit udp any any eq 53
+ permit tcp any any eq 53
+ permit udp any any eq 514
+ permit icmp any any echo-reply
+ permit udp any host 224.0.0.102 eq 1985
+ permit tcp any any est
+ !
+ deny ip any any
+exit
+!
+int g0/0/0.13
+ ip access-group PRINTER-IN in
+exit
+
+
+!!--PC-and-WiFi-IN--!!
+ip access-list extended PC-and-WiFi-IN
+ permit udp any any eq bootps
+ permit udp any any eq 53
+ permit tcp any any eq 53
+ permit udp any host 224.0.0.102 eq 1985
+ !
+ deny ip any 10.50.99.0 0.0.0.255
+ deny ip any 10.51.99.0 0.0.0.255
+ deny ip any 10.52.99.0 0.0.0.255
+ !
+ deny ip any 10.50.101.0 0.0.0.255
+ deny ip any 10.50.111.0 0.0.0.255
+ deny ip any 10.50.121.0 0.0.0.255
+ deny ip any 10.51.81.0 0.0.0.255
+ deny ip any 10.51.91.0 0.0.0.255
+ deny ip any 10.52.11.0 0.0.0.255
+ !
+ deny ip any 192.168.0.0 0.0.255.255
+ deny ip any host 50.50.1.1
+ deny ip any host 50.50.10.10
+ deny ip any host 51.51.1.1
+ deny ip any host 51.51.10.10
+ deny ip any host 52.52.1.1
+ deny ip any host 52.52.10.10
+ !
+ permit ip any any
+exit
+!
+int g0/0/0.10
+ ip access-group PC-and-WiFi-IN in
+int g0/0/0.12
+ ip access-group PC-and-WiFi-IN in
+exit
+
+
+!!------------------------------------------------------!!
+!! PHASE 5: ROUTING !!
+
+!!--5.1) OSPFv2 and OSPFv3--!!
+!!--5.3) OSPF AUTHENTICATION--!!
+
+router ospf 2
+router-id 52.52.1.1
+passive lo0
+passive lo1
+auto-cost ref 10000
+area 0 authentication message-digest
+area 52 range 10.52.0.0 255.255.0.0
+exit
+
+ipv6 router ospf 3
+router-id 52.52.10.10
+passive lo0
+auto-cost ref 10000
+exit
+
+int lo0
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+!
+int lo1
+ip ospf 2 area 0
+!
+int s0/1/0
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+!
+int s0/1/1
+ip ospf 2 area 0
+ipv6 ospf 3 area 0
+ip ospf net point-to-point
+ipv6 ospf net point-to-point
+ip ospf message-digest-key 1 md5 Sp33drun
+!
+int g0/0/0.10
+ip ospf 2 area 52
+ipv6 ospf 3 area 52
+!
+int g0/0/0.11
+ip ospf 2 area 52
+ipv6 ospf 3 area 52
+!
+int g0/0/0.12
+ip ospf 2 area 52
+ipv6 ospf 3 area 52
+!
+int g0/0/0.13
+ip ospf 2 area 52
+ipv6 ospf 3 area 52
+
+
+
+!!------------------------------------------------------!!
+!! PHASE 6: NETWORK SERVICES !!
+
+!!--6.2) ENABLE DOMAIN LOOKUP, CONFIGURE DNS SERVER--!!
+ip domain lookup
+ip name-server 10.50.104.1
+
+
+!!--6.3) DHCPv4 POOLS--!!
+ip dhcp exc 10.52.99.1 10.52.99.20
+ip dhcp exc 10.52.99.241 10.52.99.254
+!
+ip dhcp exc 10.52.10.1 10.52.10.20
+ip dhcp exc 10.52.10.241 10.52.10.254
+ip dhcp exc 10.52.11.1 10.52.11.20
+ip dhcp exc 10.52.11.241 10.52.11.254
+ip dhcp exc 10.52.12.1 10.52.12.20
+ip dhcp exc 10.52.12.241 10.52.12.254
+ip dhcp exc 10.52.13.1 10.52.13.20
+ip dhcp exc 10.52.13.241 10.52.13.254
+
+
+ip dhcp pool RCH-Management
+ network 10.52.99.0 255.255.255.0
+ default-router 10.52.99.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+ option 43 ip 10.50.99.10
+!
+ip dhcp pool RCH-PCs
+ network 10.52.10.0 255.255.255.0
+ default-router 10.52.10.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool RCH-VoIP
+ network 10.52.11.0 255.255.255.0
+ default-router 10.52.11.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool RCH-WiFi
+ network 10.52.12.0 255.255.255.0
+ default-router 10.52.12.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+ip dhcp pool RCH-Printers
+ network 10.52.13.0 255.255.255.0
+ default-router 10.52.13.254
+ domain-name speedrun.ccna
+ dns-server 10.50.104.1
+!
+
+
+!!--6.9) NTP--!!
+ntp authentication-key 1 md5 Sp33drun
+ntp trusted-key 1
+ntp server 50.50.10.10 key 1
+
+
+!!--6.10) SNMP and 6.11) SYSLOG--!!
+snmp-server community Speedrunning ro
+logging host 10.50.104.2
+logging trap debugging
+logging buffered 8192
+
+
+
+!!------------------------------------------------------!!
+!! PHASE 7: SECURING MANAGEMENT INFRASTRUCTURE !!
+
+!!--7.1) BASIC DEVICE HARDENING--!!
+enable secret speedrunning
+username runner priv 15 secret iamspeed
+login block-for 120 attempts 3 within 60
+
+line con 0
+login local
+exec-timeout 30 0
+logging synchronous
+
+exit
+
+!!--7.7) GENERATE CRYPTO SSH KEYS--!!
+crypto key gen rsa
+4096
+
+!!--7.8) ENABLE SSHv2--!!
+ip ssh version 2
+
+!!--7.9) CONFIGURE VTY LINES--!!
+line vty 0 15
+transport input ssh
+login local
+
+!!--7.10) 30-MINUTE TIMEOUT, SYNCHRONOUS LOGGING--!!
+exec-timeout 30 0
+logging sync
+
+exit
+do wr
