@@ -10,5 +10,6 @@ Included in this repository is the RFP documentation, the Packet Tracer lab docu
 the topologies, and the configuration files. 
 
 I've also included an "archives" folder for behind-the-scenes lab files and past versions of this lab.
+You'll also find the handdrawn topologies in there, when I first started this project from scratch.
 
 
