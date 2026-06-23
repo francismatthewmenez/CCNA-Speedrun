@@ -6,6 +6,8 @@ so I made this project to test my networking skills up to my limits.
 Everything relevant (to my knowledge) of the CCNA is there. Switching, routing, network security,
 network services, wireless, and VPNs. You name it. 
 
+# Phase 1
+
 If you want to try this project out, I have provided you the Packet Tracer lab instructions and .pkt files.
 Not all of the proposed solutions will be in the PT lab because of its limitations.
 
